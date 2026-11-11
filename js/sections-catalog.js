@@ -2,30 +2,221 @@
  * ============================================================================
  * ORIGEM PERSONALIZADOS RS — Dynamic Sections & Interactive Catalog Module
  * Owned by: sections-catalog (js/sections-catalog.js)
- * Exposes: window.OrigemCatalog = { init }
+ * Exposes: window.OrigemCatalog = { init, render, products, filterTabs }
  * Renders & binds:
- *   1. #catalogo-section (Bento Grid with 6 Filter Tabs & 9 Product Cards)
+ *   1. #catalogo-section (Bento Grid from content.categories & content.products)
  *   2. #simulador-section (Interactive 3-Step Quote Configurator + Live WA Preview)
- *   3. #portfolio-section (@origempersonalizadosrs Highlights & 6 Real Showcase Posts)
+ *   3. #portfolio-section (Official Real Instagram Embeds & Direct Profile Links)
  *   4. #como-funciona-section (4-Step Process Timeline & Interactive FAQ Accordion)
- *   5. #cta-final-section & #footer-section (High-Impact Final CTA & Full Footer)
+ *   5. #cta-final-section & #footer-section (Final CTA & Footer + Área do Proprietário)
  * ============================================================================
  */
 (function () {
   'use strict';
 
-  const WA_NUMBER = '5551980577025';
-  const WA_DIRECT_LINK = 'https://wa.me/message/L34PQGHRXEMLM1';
-  const IG_URL = 'https://www.instagram.com/origempersonalizadosrs/';
-  const EMAIL_ADDRESS = 'origempersonalizadosrs@gmail.com';
+  /* --------------------------------------------------------------------------
+     DEFAULT CONTENT FALLBACKS (Conforms strictly to Round 2 Schema)
+     -------------------------------------------------------------------------- */
+  const DEFAULT_BUSINESS = {
+    name: 'Origem Personalizados RS',
+    slogan: 'Sua ideia, nossa criação!',
+    tagline: 'Impressos feitos para deixar sua marca.',
+    whatsapp: '5551980577025',
+    whatsappDisplay: '(51) 98057-7025',
+    whatsappLink: 'https://wa.me/message/L34PQGHRXEMLM1',
+    email: 'origempersonalizadosrs@gmail.com',
+    instagram: 'origempersonalizadosrs',
+    city: 'Capão da Canoa - RS',
+    cep: '95555-000'
+  };
 
-  function buildWhatsAppUrl(message) {
-    return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`;
-  }
+  const DEFAULT_CATEGORIES = [
+    { id: 'todos', label: 'Todos', icon: 'layout-grid' },
+    { id: 'brindes', label: 'Brindes & Térmicos', icon: 'cup-soda' },
+    { id: 'grafica', label: 'Gráfica & Calendários', icon: 'calendar-days' },
+    { id: 'comunicacao', label: 'Comunicação Visual', icon: 'flag' },
+    { id: 'vestuario', label: 'Vestuário & Eventos', icon: 'shirt' },
+    { id: 'decoracao', label: 'Decoração & Capachos', icon: 'frame' }
+  ];
+
+  const DEFAULT_PRODUCTS = [
+    {
+      id: 'copos-termicos',
+      name: 'Copos Térmicos & Canecas Personalizadas',
+      category: 'brindes',
+      simulatorCategory: 'Brindes/Copos/Canecas',
+      badge: 'Mais Pedido',
+      badgeStyle: 'amber',
+      priceFrom: '',
+      image: '',
+      artId: 'copos-termicos',
+      bentoWide: true,
+      visible: true,
+      order: 1,
+      description:
+        'Copos térmicos em inox com tampa e gravação a laser permanente para empresas, CTGs, festas e presentes, além de canecas de cerâmica, polímero e chopp personalizadas com alta definição.',
+      specs: ['Inox Gravado a Laser', 'Canecas Cerâmica & Polímero', 'Empresas, CTGs & Festas']
+    },
+    {
+      id: 'calendarios-2027',
+      name: 'Calendários 2027 (Mesa Wire-o & Parede)',
+      category: 'grafica',
+      simulatorCategory: 'Materiais Gráficos/Calendários',
+      badge: 'Temporada 2027',
+      badgeStyle: 'amber',
+      priceFrom: '',
+      image: '',
+      artId: 'calendarios-2027',
+      bentoWide: true,
+      visible: true,
+      order: 2,
+      description:
+        'Seu cliente lembrará de você todos os dias do ano! Ideal para brindes corporativos de fim de ano. Modelos de mesa com acabamento Wire-O e de parede personalizados com sua marca e contatos.',
+      specs: ['Mesa com Wire-O', 'Folhinhas de Parede', 'Brinde de Fim de Ano']
+    },
+    {
+      id: 'camisetas-uniformes',
+      name: 'Camisetas, Moletons & Bonés',
+      category: 'vestuario',
+      simulatorCategory: 'Camisetas/Uniformes',
+      badge: 'Equipes & Família',
+      badgeStyle: 'sage',
+      priceFrom: '',
+      image: '',
+      artId: 'camisetas-uniformes',
+      bentoWide: false,
+      visible: true,
+      order: 3,
+      description:
+        'Uniformes profissionais que passam credibilidade para sua equipe, camisetas promocionais para eventos, linha especial "Natal da Família", moletons e bonés em dry-fit ou algodão.',
+      specs: ['Uniformes Profissionais', 'Natal da Família & Eventos', 'Dry-Fit, Algodão & Moletom']
+    },
+    {
+      id: 'cartoes-papelaria',
+      name: 'Cartões de Visita, Panfletos, Pastas & Recibos',
+      category: 'grafica',
+      simulatorCategory: 'Materiais Gráficos/Calendários',
+      badge: 'Papelaria Completa',
+      badgeStyle: 'sage',
+      priceFrom: '',
+      image: '',
+      artId: 'cartoes-papelaria',
+      bentoWide: false,
+      visible: true,
+      order: 4,
+      description:
+        'Papelaria corporativa completa para fortalecer sua identidade: cartões de visita premium, panfletos, pastas com bolsa, tags para confecções, blocos de pedidos, recibos e cadernos.',
+      specs: ['Cartões & Panfletos', 'Tags para Confecções', 'Pastas, Blocos & Cadernos']
+    },
+    {
+      id: 'adesivos-rotulos',
+      name: 'Adesivos Vinílicos & Rótulos Recortados',
+      category: 'comunicacao',
+      simulatorCategory: 'Adesivos/Banners/Fachada',
+      badge: "À Prova D'Água",
+      badgeStyle: 'sage',
+      priceFrom: '',
+      image: '',
+      artId: 'adesivos-rotulos',
+      bentoWide: false,
+      visible: true,
+      order: 5,
+      description:
+        'Adesivos em vinil impermeável à prova d’água com recorte eletrônico de alta precisão para embalagens, doces, gastronomia, veículos, copos e vitrines comerciais.',
+      specs: ['Recorte Eletrônico', 'Vinil Impermeável', 'Rótulos, Carros & Vitrines']
+    },
+    {
+      id: 'banners-windbanner',
+      name: 'WindBanners, Banners, Lonas & Placas de Fachada',
+      category: 'comunicacao',
+      simulatorCategory: 'Adesivos/Banners/Fachada',
+      badge: 'Destaque Litoral',
+      badgeStyle: 'amber',
+      priceFrom: '',
+      image: '',
+      artId: 'banners-windbanner',
+      bentoWide: false,
+      visible: true,
+      order: 6,
+      description:
+        'Destaque sua loja em Capão da Canoa e em todo o Litoral Norte! WindBanners completos, banners promocionais, lonas e placas de fachada com alta resistência ao sol e vento.',
+      specs: ['WindBanner Completo', 'Banners & Lonas', 'Placas de Fachada']
+    },
+    {
+      id: 'tapetes-capachos',
+      name: 'Tapetes Capachos Personalizados',
+      category: 'decoracao',
+      simulatorCategory: 'Capachos/Decoração',
+      badge: 'Vulcanizado Premium',
+      badgeStyle: 'sage',
+      priceFrom: '',
+      image: '',
+      artId: 'tapetes-capachos',
+      bentoWide: false,
+      visible: true,
+      order: 7,
+      description:
+        'Receba seus clientes com impacto desde a porta de entrada! Capachos vinílicos vulcanizados antiderrapantes com a logo da sua empresa ou frases para condomínios e residências.',
+      specs: ['Fibra Vinílica Vulcanizada', 'Antiderrapante & Lavável', 'Comércios & Condomínios']
+    },
+    {
+      id: 'quadros-azulejos',
+      name: 'Quadrinhos Decorativos & Azulejos com Foto',
+      category: 'decoracao',
+      simulatorCategory: 'Capachos/Decoração',
+      badge: 'Presente Inesquecível',
+      badgeStyle: 'sage',
+      priceFrom: '',
+      image: '',
+      artId: 'quadros-azulejos',
+      bentoWide: false,
+      visible: true,
+      order: 8,
+      description:
+        'Decore com estilo e personalidade! Transforme seus espaços ou dê um presente emocionante com quadrinhos decorativos e azulejos personalizados com foto, frase ou homenagem.',
+      specs: ['Quadros Decorativos', 'Azulejos com Suporte', 'Presentes & Memórias']
+    },
+    {
+      id: 'canecas-chaveiros',
+      name: 'Mouse Pads, Chaveirinhos & Toalhas Personalizadas',
+      category: 'brindes',
+      simulatorCategory: 'Brindes/Copos/Canecas',
+      badge: 'Kits & Campanhas',
+      badgeStyle: 'amber',
+      priceFrom: '',
+      image: '',
+      artId: 'canecas-chaveiros',
+      bentoWide: false,
+      visible: true,
+      order: 9,
+      description:
+        'Brindes corporativos criativos e úteis para ações promocionais, Outubro Rosa, Novembro Azul, feiras, kits de boas-vindas e lembranças personalizadas que encantam.',
+      specs: ['Mouse Pads & Chaveiros', 'Toalhas Personalizadas', 'Campanhas & Eventos']
+    }
+  ];
+
+  const DEFAULT_INSTAGRAM_POSTS = [
+    { id: 'post-1', url: 'https://www.instagram.com/p/DfmaEPEtQD8/', caption: 'Copos térmicos inox com gravação a laser permanente', visible: true },
+    { id: 'post-2', url: 'https://www.instagram.com/p/DfmaCIzPuLf/', caption: 'Copos e canecas personalizados para eventos e empresas', visible: true },
+    { id: 'post-3', url: 'https://www.instagram.com/p/Dfk-COvp8Qw/', caption: 'Linha de Calendários 2027 com acabamento Wire-O e parede', visible: true },
+    { id: 'post-4', url: 'https://www.instagram.com/p/DfVTSI-pG4g/', caption: 'Camisetas personalizadas para equipes e uniformes', visible: true },
+    { id: 'post-5', url: 'https://www.instagram.com/p/DfVTQElpFY3/', caption: 'Adesivos vinílicos impermeáveis e rótulos recortados', visible: true },
+    { id: 'post-6', url: 'https://www.instagram.com/p/DfX_YGqpABQ/', caption: 'Tapetes capachos vulcanizados e comunicação visual', visible: true },
+    { id: 'post-7', url: 'https://www.instagram.com/p/DfX_U3hJbwb/', caption: 'Kits de brindes corporativos e presentes especiais', visible: true },
+    { id: 'post-8', url: 'https://www.instagram.com/p/DfSUQY9JjpX/', caption: 'Personalizados para datas comemorativas e empresas', visible: true },
+    { id: 'post-9', url: 'https://www.instagram.com/p/Dc6gLzWpWYS/', caption: 'Produção da Origem Personalizados em Capão da Canoa', visible: true },
+    { id: 'post-10', url: 'https://www.instagram.com/p/Dd3-UBURttx/', caption: 'Impressos de alta qualidade para deixar sua marca', visible: true }
+  ];
+
+  const DEFAULT_CONTENT = {
+    business: DEFAULT_BUSINESS,
+    categories: DEFAULT_CATEGORIES,
+    products: DEFAULT_PRODUCTS,
+    instagramPosts: DEFAULT_INSTAGRAM_POSTS
+  };
 
   /* --------------------------------------------------------------------------
-     FALLBACK BESPOKE SVG ILLUSTRATIONS (Used if OrigemVisuals.getProductArt
-     is not yet loaded or as rich fallback artwork)
+     FALLBACK BESPOKE SVG ARTWORK LIBRARY
      -------------------------------------------------------------------------- */
   const FALLBACK_PRODUCT_SVGS = {
     'copos-termicos': `
@@ -47,16 +238,13 @@
           </linearGradient>
         </defs>
         <ellipse cx="140" cy="182" rx="95" ry="10" fill="rgba(0,0,0,0.35)"/>
-        <!-- Thermal Tumbler -->
         <path d="M74 26H146L138 174C137.5 178 134 180 130 180H90C86 180 82.5 178 82 174L74 26Z" fill="url(#cupBody)" stroke="#8FAF85" stroke-width="1.5"/>
         <rect x="71" y="20" width="78" height="14" rx="4" fill="url(#steelRim)"/>
         <rect x="78" y="13" width="64" height="8" rx="3" fill="#1E3524" stroke="#A2C59D" stroke-width="1"/>
-        <!-- Laser Engraved Emblem -->
         <circle cx="110" cy="96" r="24" fill="none" stroke="#D4A359" stroke-width="1.6" stroke-dasharray="3 2"/>
         <circle cx="110" cy="96" r="19" fill="rgba(212,163,89,0.12)" stroke="#E2B875" stroke-width="1"/>
         <text x="110" y="95" text-anchor="middle" fill="#F0CFA0" font-family="Georgia, serif" font-size="7.5" font-weight="700" letter-spacing="1">ORIGEM</text>
         <text x="110" y="104" text-anchor="middle" fill="#D4A359" font-family="sans-serif" font-size="4.8" font-weight="700">LASER INOX</text>
-        <!-- Ceramic Mug -->
         <path d="M225 96H242C249 96 254 102 254 110V136C254 144 249 150 242 150H225" stroke="#F7F9F5" stroke-width="6" stroke-linecap="round"/>
         <rect x="164" y="82" width="66" height="88" rx="10" fill="url(#mugGrad)" stroke="#F7F9F5" stroke-width="1.5"/>
         <circle cx="197" cy="126" r="18" fill="#F7F9F5"/>
@@ -66,12 +254,9 @@
     'calendarios-2027': `
       <svg viewBox="0 0 280 200" width="240" height="172" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Calendários 2027 Personalizados">
         <ellipse cx="140" cy="182" rx="95" ry="10" fill="rgba(0,0,0,0.32)"/>
-        <!-- Desk Calendar Base Tent -->
         <path d="M52 168L70 42H210L228 168H52Z" fill="#1E3524" stroke="#8FAF85" stroke-width="1.5"/>
         <rect x="64" y="44" width="152" height="114" rx="8" fill="#F7F9F5"/>
-        <!-- Top Header Banner -->
         <path d="M64 52C64 47.5817 67.5817 44 72 44H208C212.418 44 216 47.5817 216 52V78H64V52Z" fill="#8FAF85"/>
-        <!-- Wire-O Rings -->
         <g fill="#D4A359">
           <rect x="78" y="36" width="5" height="14" rx="2.5"/>
           <rect x="98" y="36" width="5" height="14" rx="2.5"/>
@@ -82,7 +267,6 @@
           <rect x="198" y="36" width="5" height="14" rx="2.5"/>
         </g>
         <text x="140" y="66" text-anchor="middle" fill="#142418" font-family="Georgia, serif" font-size="15" font-weight="700" letter-spacing="1.5">CALENDÁRIO 2027</text>
-        <!-- Calendar Grid -->
         <rect x="76" y="88" width="52" height="56" rx="6" fill="#EDF2EA" stroke="#8FAF85" stroke-width="1"/>
         <text x="102" y="114" text-anchor="middle" fill="#142418" font-family="sans-serif" font-size="16" font-weight="800">2027</text>
         <text x="102" y="129" text-anchor="middle" fill="#3E5243" font-family="sans-serif" font-size="6.5" font-weight="700">365 DIAS COM VOCÊ</text>
@@ -107,11 +291,8 @@
     'camisetas-uniformes': `
       <svg viewBox="0 0 280 200" width="240" height="172" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Camisetas, Moletons e Bonés Personalizados">
         <ellipse cx="140" cy="184" rx="90" ry="9" fill="rgba(0,0,0,0.32)"/>
-        <!-- T-Shirt Silhouette -->
         <path d="M98 34L60 56L74 88L98 76V170H182V76L206 88L220 56L182 34C172 48 158 54 140 54C122 54 108 48 98 34Z" fill="#8FAF85" stroke="#F7F9F5" stroke-width="2" stroke-linejoin="round"/>
-        <!-- Collar Detail -->
         <path d="M114 38C122 48 158 48 166 38" stroke="#142418" stroke-width="3" stroke-linecap="round"/>
-        <!-- Custom Chest Print -->
         <circle cx="140" cy="102" r="26" fill="#142418" stroke="#D4A359" stroke-width="1.5"/>
         <text x="140" y="100" text-anchor="middle" fill="#FFFFFF" font-family="Georgia, serif" font-size="8.5" font-weight="700" letter-spacing="1">ORIGEM</text>
         <text x="140" y="111" text-anchor="middle" fill="#A2C59D" font-family="sans-serif" font-size="5.5" font-weight="700">UNIFORMES &amp; EVENTOS</text>
@@ -122,10 +303,8 @@
     'cartoes-papelaria': `
       <svg viewBox="0 0 280 200" width="240" height="172" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cartões de Visita, Panfletos e Papelaria">
         <ellipse cx="140" cy="182" rx="95" ry="9" fill="rgba(0,0,0,0.32)"/>
-        <!-- Folder / Flyer Back -->
         <rect x="52" y="34" width="110" height="132" rx="8" transform="rotate(-6 52 34)" fill="#EDF2EA" stroke="#8FAF85" stroke-width="1.5"/>
         <rect x="64" y="48" width="84" height="14" rx="4" transform="rotate(-6 64 48)" fill="#8FAF85"/>
-        <!-- Front Business Card Dark Luxury -->
         <rect x="96" y="76" width="142" height="86" rx="10" fill="#142418" stroke="#D4A359" stroke-width="1.8"/>
         <circle cx="132" cy="118" r="20" fill="#8FAF85"/>
         <text x="132" y="121" text-anchor="middle" fill="#142418" font-family="Georgia, serif" font-size="7.5" font-weight="700">ORIGEM</text>
@@ -137,14 +316,11 @@
     'adesivos-rotulos': `
       <svg viewBox="0 0 280 200" width="240" height="172" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Adesivos Vinílicos e Rótulos Recortados">
         <ellipse cx="140" cy="182" rx="90" ry="9" fill="rgba(0,0,0,0.32)"/>
-        <!-- Die-cut Sticker Sheet -->
         <rect x="58" y="28" width="164" height="140" rx="14" fill="#F7F9F5" stroke="#8FAF85" stroke-width="1.5" stroke-dasharray="5 4"/>
-        <!-- Round Die-Cut Sticker with Peel -->
         <circle cx="115" cy="96" r="40" fill="#8FAF85" stroke="#142418" stroke-width="2"/>
         <circle cx="115" cy="96" r="33" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-dasharray="3 2"/>
         <text x="115" y="94" text-anchor="middle" fill="#FFFFFF" font-family="Georgia, serif" font-size="11" font-weight="700">ORIGEM</text>
         <text x="115" y="106" text-anchor="middle" fill="#142418" font-family="sans-serif" font-size="6" font-weight="800">VINIL À PROVA D'ÁGUA</text>
-        <!-- Badge Sticker -->
         <rect x="164" y="56" width="44" height="44" rx="10" fill="#142418" stroke="#D4A359" stroke-width="1.5"/>
         <text x="186" y="81" text-anchor="middle" fill="#D4A359" font-family="sans-serif" font-size="7" font-weight="800">RÓTULOS</text>
         <rect x="164" y="110" width="44" height="38" rx="8" fill="#D4A359"/>
@@ -154,12 +330,10 @@
     'banners-windbanner': `
       <svg viewBox="0 0 280 200" width="240" height="172" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="WindBanners, Banners, Lonas e Placas de Fachada">
         <ellipse cx="140" cy="182" rx="95" ry="9" fill="rgba(0,0,0,0.32)"/>
-        <!-- WindBanner Feather Flag -->
         <path d="M78 172V28C78 22 126 18 128 54C130 90 124 126 78 144" fill="#8FAF85" stroke="#F7F9F5" stroke-width="2"/>
         <line x1="78" y1="24" x2="78" y2="174" stroke="#D4A359" stroke-width="3.5" stroke-linecap="round"/>
         <rect x="62" y="170" width="32" height="7" rx="3.5" fill="#D4A359"/>
         <text x="103" y="86" text-anchor="middle" fill="#142418" font-family="sans-serif" font-size="7.5" font-weight="800" transform="rotate(-90 103 86)">WINDBANNER</text>
-        <!-- Storefront Sign / Lona -->
         <rect x="142" y="48" width="88" height="114" rx="8" fill="#142418" stroke="#A2C59D" stroke-width="1.8"/>
         <rect x="152" y="60" width="68" height="32" rx="5" fill="#8FAF85"/>
         <text x="186" y="79" text-anchor="middle" fill="#142418" font-family="Georgia, serif" font-size="9" font-weight="700">FACHADA</text>
@@ -170,7 +344,6 @@
     'tapetes-capachos': `
       <svg viewBox="0 0 280 200" width="240" height="172" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tapetes Capachos Personalizados">
         <ellipse cx="140" cy="178" rx="105" ry="12" fill="rgba(0,0,0,0.35)"/>
-        <!-- Vulcanized Mat Perspective -->
         <polygon points="62,56 218,56 242,158 38,158" fill="#2A382E" stroke="#D4A359" stroke-width="2.5" stroke-linejoin="round"/>
         <polygon points="72,66 208,66 226,148 54,148" fill="#142418" stroke="#8FAF85" stroke-width="1.2" stroke-dasharray="4 3"/>
         <circle cx="140" cy="104" r="24" fill="#8FAF85"/>
@@ -182,12 +355,10 @@
     'quadros-azulejos': `
       <svg viewBox="0 0 280 200" width="240" height="172" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Quadrinhos Decorativos e Azulejos com Foto">
         <ellipse cx="140" cy="182" rx="95" ry="9" fill="rgba(0,0,0,0.32)"/>
-        <!-- Decorative Wood Frame -->
         <rect x="56" y="32" width="96" height="124" rx="6" fill="#D4A359" stroke="#F7F9F5" stroke-width="1.5"/>
         <rect x="65" y="41" width="78" height="106" rx="3" fill="#F7F9F5"/>
         <circle cx="104" cy="82" r="22" fill="#8FAF85"/>
         <path d="M74 134L94 108L112 124L124 112L136 134H74Z" fill="#1E3524"/>
-        <!-- Ceramic Tile on Stand -->
         <rect x="138" y="64" width="88" height="88" rx="8" fill="#FFFFFF" stroke="#8FAF85" stroke-width="2.5"/>
         <rect x="148" y="74" width="68" height="54" rx="4" fill="#EDF2EA"/>
         <text x="182" y="102" text-anchor="middle" fill="#142418" font-family="Georgia, serif" font-size="8.5" font-weight="700">SUA FOTO</text>
@@ -198,15 +369,12 @@
     'canecas-chaveiros': `
       <svg viewBox="0 0 280 200" width="240" height="172" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mouse Pads, Chaveirinhos e Toalhas Personalizadas">
         <ellipse cx="140" cy="182" rx="95" ry="9" fill="rgba(0,0,0,0.32)"/>
-        <!-- Mousepad -->
         <rect x="52" y="54" width="110" height="96" rx="14" fill="#142418" stroke="#8FAF85" stroke-width="2"/>
         <circle cx="107" cy="102" r="24" fill="#8FAF85"/>
         <text x="107" y="105" text-anchor="middle" fill="#142418" font-family="Georgia, serif" font-size="7.5" font-weight="700">MOUSE PAD</text>
-        <!-- Custom Towel Folded -->
         <rect x="150" y="42" width="78" height="56" rx="8" fill="#F7F9F5" stroke="#A2C59D" stroke-width="1.5"/>
         <rect x="150" y="72" width="78" height="14" fill="#8FAF85"/>
         <text x="189" y="82" text-anchor="middle" fill="#142418" font-family="sans-serif" font-size="6.5" font-weight="800">TOALHA BORDADA/SUBL.</text>
-        <!-- Keychain -->
         <circle cx="188" cy="122" r="10" stroke="#D4A359" stroke-width="3"/>
         <rect x="168" y="132" width="40" height="36" rx="8" fill="#D4A359"/>
         <text x="188" y="153" text-anchor="middle" fill="#142418" font-family="sans-serif" font-size="6.5" font-weight="800">CHAVEIRO</text>
@@ -214,185 +382,50 @@
   };
 
   /* --------------------------------------------------------------------------
-     1. CATALOG DATA (9 Detailed Products & 6 Filter Categories)
-     -------------------------------------------------------------------------- */
-  const FILTER_TABS = [
-    { id: 'Todos', label: 'Todos', icon: 'layout-grid' },
-    { id: 'Brindes & Térmicos', label: 'Brindes & Térmicos', icon: 'cup-soda' },
-    { id: 'Gráfica & Calendários', label: 'Gráfica & Calendários', icon: 'calendar-days' },
-    { id: 'Comunicação Visual', label: 'Comunicação Visual', icon: 'flag' },
-    { id: 'Vestuário & Eventos', label: 'Vestuário & Eventos', icon: 'shirt' },
-    { id: 'Decoração & Capachos', label: 'Decoração & Capachos', icon: 'frame' }
-  ];
-
-  const CATALOG_PRODUCTS = [
-    {
-      id: 'copos-termicos',
-      title: 'Copos Térmicos & Canecas Personalizadas',
-      category: 'Brindes & Térmicos',
-      simulatorCategory: 'Brindes/Copos/Canecas',
-      badge: 'Mais Pedido',
-      badgeStyle: 'amber',
-      bentoWide: true,
-      description:
-        'Copos térmicos em inox com tampa e gravação a laser permanente para empresas, CTGs, festas e presentes, além de canecas de cerâmica, polímero e chopp personalizadas com alta definição.',
-      specs: ['Inox Gravado a Laser', 'Canecas Cerâmica & Polímero', 'Empresas, CTGs & Festas'],
-      waMessage:
-        'Olá Origem Personalizados! Vim pelo site e gostaria de fazer um orçamento de Copos Térmicos / Canecas Personalizadas.'
-    },
-    {
-      id: 'calendarios-2027',
-      title: 'Calendários 2027 (Mesa Wire-o & Parede)',
-      category: 'Gráfica & Calendários',
-      simulatorCategory: 'Materiais Gráficos/Calendários',
-      badge: 'Temporada 2027',
-      badgeStyle: 'amber',
-      bentoWide: true,
-      description:
-        'Seu cliente lembrará de você todos os dias do ano! Ideal para brindes corporativos de fim de ano. Modelos de mesa com acabamento Wire-O e de parede personalizados com sua marca e contatos.',
-      specs: ['Mesa com Wire-O', 'Folhinhas de Parede', 'Brinde de Fim de Ano'],
-      waMessage:
-        'Olá Origem Personalizados! Vim pelo site e quero orçar a Linha de Calendários 2027 (Mesa Wire-o / Parede) com a minha marca.'
-    },
-    {
-      id: 'camisetas-uniformes',
-      title: 'Camisetas, Moletons & Bonés',
-      category: 'Vestuário & Eventos',
-      simulatorCategory: 'Camisetas/Uniformes',
-      badge: 'Equipes & Família',
-      badgeStyle: 'sage',
-      bentoWide: false,
-      description:
-        'Uniformes profissionais que passam credibilidade para sua equipe, camisetas promocionais para eventos, linha especial "Natal da Família", moletons e bonés em dry-fit ou algodão.',
-      specs: ['Uniformes Profissionais', 'Natal da Família & Eventos', 'Dry-Fit, Algodão & Moletom'],
-      waMessage:
-        'Olá Origem Personalizados! Vim pelo site e gostaria de orçar Camisetas, Moletons ou Uniformes Personalizados.'
-    },
-    {
-      id: 'cartoes-papelaria',
-      title: 'Cartões de Visita, Panfletos, Pastas & Recibos',
-      category: 'Gráfica & Calendários',
-      simulatorCategory: 'Materiais Gráficos/Calendários',
-      badge: 'Papelaria Completa',
-      badgeStyle: 'sage',
-      bentoWide: false,
-      description:
-        'Papelaria corporativa completa para fortalecer sua identidade: cartões de visita premium, panfletos, pastas com bolsa, tags para confecções, blocos de pedidos, recibos e cadernos.',
-      specs: ['Cartões & Panfletos', 'Tags para Confecções', 'Pastas, Blocos & Cadernos'],
-      waMessage:
-        'Olá Origem Personalizados! Vim pelo site e gostaria de um orçamento de Papelaria Gráfica (Cartões de Visita, Panfletos, Pastas ou Blocos).'
-    },
-    {
-      id: 'adesivos-rotulos',
-      title: 'Adesivos Vinílicos & Rótulos Recortados',
-      category: 'Comunicação Visual',
-      simulatorCategory: 'Adesivos/Banners/Fachada',
-      badge: "À Prova D'Água",
-      badgeStyle: 'sage',
-      bentoWide: false,
-      description:
-        'Adesivos em vinil impermeável à prova d’água com recorte eletrônico de alta precisão para embalagens, doces, gastronomia, veículos, copos e vitrines comerciais.',
-      specs: ['Recorte Eletrônico', 'Vinil Impermeável', 'Rótulos, Carros & Vitrines'],
-      waMessage:
-        'Olá Origem Personalizados! Vim pelo site e gostaria de orçar Adesivos Vinílicos e Rótulos Personalizados.'
-    },
-    {
-      id: 'banners-windbanner',
-      title: 'WindBanners, Banners, Lonas & Placas de Fachada',
-      category: 'Comunicação Visual',
-      simulatorCategory: 'Adesivos/Banners/Fachada',
-      badge: 'Destaque Litoral',
-      badgeStyle: 'amber',
-      bentoWide: false,
-      description:
-        'Destaque sua loja em Capão da Canoa e em todo o Litoral Norte! WindBanners completos, banners promocionais, lonas e placas de fachada com alta resistência ao sol e vento.',
-      specs: ['WindBanner Completo', 'Banners & Lonas', 'Placas de Fachada'],
-      waMessage:
-        'Olá Origem Personalizados! Vim pelo site e gostaria de orçar WindBanners, Banners ou Placas de Fachada para o meu negócio.'
-    },
-    {
-      id: 'tapetes-capachos',
-      title: 'Tapetes Capachos Personalizados',
-      category: 'Decoração & Capachos',
-      simulatorCategory: 'Capachos/Decoração',
-      badge: 'Vulcanizado Premium',
-      badgeStyle: 'sage',
-      bentoWide: false,
-      description:
-        'Receba seus clientes com impacto desde a porta de entrada! Capachos vinílicos vulcanizados antiderrapantes com a logo da sua empresa ou frases para condomínios e residências.',
-      specs: ['Fibra Vinílica Vulcanizada', 'Antiderrapante & Lavável', 'Comércios & Condomínios'],
-      waMessage:
-        'Olá Origem Personalizados! Vim pelo site e gostaria de orçar um Tapete Capacho Personalizado com a minha marca.'
-    },
-    {
-      id: 'quadros-azulejos',
-      title: 'Quadrinhos Decorativos & Azulejos com Foto',
-      category: 'Decoração & Capachos',
-      simulatorCategory: 'Capachos/Decoração',
-      badge: 'Presente Inesquecível',
-      badgeStyle: 'sage',
-      bentoWide: false,
-      description:
-        'Decore com estilo e personalidade! Transforme seus espaços ou dê um presente emocionante com quadrinhos decorativos e azulejos personalizados com foto, frase ou homenagem.',
-      specs: ['Quadros Decorativos', 'Azulejos com Suporte', 'Presentes & Memórias'],
-      waMessage:
-        'Olá Origem Personalizados! Vim pelo site e gostaria de orçar Quadrinhos Decorativos ou Azulejos Personalizados.'
-    },
-    {
-      id: 'canecas-chaveiros',
-      title: 'Mouse Pads, Chaveirinhos & Toalhas Personalizadas',
-      category: 'Brindes & Térmicos',
-      simulatorCategory: 'Brindes/Copos/Canecas',
-      badge: 'Kits & Campanhas',
-      badgeStyle: 'amber',
-      bentoWide: false,
-      description:
-        'Brindes corporativos criativos e úteis para ações promocionais, Outubro Rosa, Novembro Azul, feiras, kits de boas-vindas e lembranças personalizadas que encantam.',
-      specs: ['Mouse Pads & Chaveiros', 'Toalhas Personalizadas', 'Campanhas & Eventos'],
-      waMessage:
-        'Olá Origem Personalizados! Vim pelo site e gostaria de orçar Brindes Personalizados (Mouse Pads, Chaveirinhos ou Toalhas).'
-    }
-  ];
-
-  /* --------------------------------------------------------------------------
-     2. SIMULATOR OPTIONS DATA
+     SIMULATOR PRESETS & HOW IT WORKS / FAQ DATA
      -------------------------------------------------------------------------- */
   const SIM_STEP_1_ITEMS = [
     {
       id: 'Brindes/Copos/Canecas',
       label: 'Brindes, Copos & Canecas',
       sub: 'Copos térmicos inox, canecas, mouse pads, chaveiros e toalhas',
-      icon: 'cup-soda'
+      icon: 'cup-soda',
+      matchKeys: ['brindes', 'copo', 'caneca', 'termic', 'mousepad', 'chaveiro', 'toalha']
     },
     {
       id: 'Materiais Gráficos/Calendários',
       label: 'Gráfica & Calendários 2027',
       sub: 'Calendários mesa/parede, cartões, panfletos, pastas e blocos',
-      icon: 'calendar-days'
+      icon: 'calendar-days',
+      matchKeys: ['grafica', 'calendario', 'cartao', 'panfleto', 'pasta', 'recibo']
     },
     {
       id: 'Camisetas/Uniformes',
       label: 'Camisetas & Uniformes',
       sub: 'Camisetas para empresas, eventos, Natal da família e moletons',
-      icon: 'shirt'
+      icon: 'shirt',
+      matchKeys: ['vestuario', 'camiseta', 'uniforme', 'moleton', 'bone']
     },
     {
       id: 'Adesivos/Banners/Fachada',
       label: 'Adesivos, Banners & Fachada',
       sub: 'Adesivos vinílicos, rótulos, WindBanners, lonas e placas',
-      icon: 'flag'
+      icon: 'flag',
+      matchKeys: ['comunicacao', 'adesivo', 'rotulo', 'banner', 'windbanner', 'lona', 'placa', 'fachada']
     },
     {
       id: 'Capachos/Decoração',
       label: 'Capachos & Decoração',
       sub: 'Tapetes capachos com logo, quadrinhos e azulejos com foto',
-      icon: 'layers'
+      icon: 'layers',
+      matchKeys: ['decoracao', 'capacho', 'tapete', 'quadro', 'azulejo']
     },
     {
       id: 'Outro/Vários itens',
       label: 'Outro / Vários Itens (Kit)',
       sub: 'Quero montar um pacote com diferentes produtos personalizados',
-      icon: 'package-plus'
+      icon: 'package-plus',
+      matchKeys: ['outro', 'kit']
     }
   ];
 
@@ -438,158 +471,13 @@
     }
   ];
 
-  /* --------------------------------------------------------------------------
-     3. INSTAGRAM HIGHLIGHTS & PORTFOLIO SHOWCASE DATA
-     -------------------------------------------------------------------------- */
-  const IG_HIGHLIGHTS = [
-    {
-      id: 'Todos',
-      label: 'Todos',
-      icon: 'sparkles',
-      desc: 'Mostrando todos os destaques e trabalhos reais produzidos pela Origem Personalizados RS.'
-    },
-    {
-      id: 'Camisetas',
-      label: 'Camisetas',
-      icon: 'shirt',
-      desc: 'Camisetas personalizadas para empresas, eventos, Natal da Família e moletons exclusivos.',
-      waText: 'Olá! Vi o destaque de Camisetas no site e gostaria de fazer um orçamento.'
-    },
-    {
-      id: 'Adesivos',
-      label: 'Adesivos',
-      icon: 'sticker',
-      desc: 'Adesivos em vinil à prova d’água e rótulos recortados para embalagens, doces e vitrines.',
-      waText: 'Olá! Vi o destaque de Adesivos no site e gostaria de fazer um orçamento.'
-    },
-    {
-      id: 'Quadros',
-      label: 'Quadros',
-      icon: 'frame',
-      desc: 'Quadrinhos decorativos e azulejos personalizados para transformar ambientes ou presentear.',
-      waText: 'Olá! Vi o destaque de Quadros Decorativos no site e gostaria de fazer um orçamento.'
-    },
-    {
-      id: 'Tapetes',
-      label: 'Tapetes',
-      icon: 'layers',
-      desc: 'Tapetes capachos vulcanizados personalizados com a marca da sua empresa ou condomínio.',
-      waText: 'Olá! Vi o destaque de Tapetes Capachos no site e gostaria de fazer um orçamento.'
-    },
-    {
-      id: 'Toalhas',
-      label: 'Toalhas',
-      icon: 'gift',
-      desc: 'Toalhas personalizadas, mouse pads e chaveirinhos para brindes e presentes especiais.',
-      waText: 'Olá! Vi o destaque de Toalhas e Brindes no site e gostaria de fazer um orçamento.'
-    },
-    {
-      id: 'Bandeira',
-      label: 'Bandeira',
-      icon: 'flag',
-      desc: 'WindBanners, bandeiras, lonas e fachadas comerciais de alta resistência para o Litoral.',
-      waText: 'Olá! Vi o destaque de WindBanners e Bandeiras no site e gostaria de fazer um orçamento.'
-    },
-    {
-      id: 'Canecas',
-      label: 'Canecas',
-      icon: 'cup-soda',
-      desc: 'Copos térmicos inox gravados a laser e canecas personalizadas para empresas, CTGs e festas.',
-      waText: 'Olá! Vi o destaque de Copos Térmicos e Canecas no site e gostaria de fazer um orçamento.'
-    }
-  ];
-
-  const DEFAULT_PORTFOLIO_ITEMS = [
-    {
-      id: 'post-novembro-azul',
-      title: 'Copos Térmicos Personalizados — Campanha Novembro Azul',
-      badge: 'Brindes Corporativos',
-      type: 'Reel • Gravação Laser',
-      highlights: ['Canecas', 'Toalhas'],
-      image: 'assets/instagram/post-novembro-azul.jpg',
-      fallbackArtId: 'copos-termicos',
-      caption:
-        'Copos térmicos azuis em inox personalizados com gravação de alta precisão para campanhas de conscientização, empresas e presentes especiais.',
-      waMessage:
-        'Olá! Vi os Copos Térmicos personalizados (estilo Novembro Azul) no portfólio do site e gostaria de um orçamento.'
-    },
-    {
-      id: 'post-ctg-copos',
-      title: 'Copos Gravados a Laser — CTG Chama Crioula & Eventos',
-      badge: 'Tradição Gaúcha',
-      type: 'Reel • Inox Premium',
-      highlights: ['Canecas'],
-      image: 'assets/instagram/post-ctg-copos.jpg',
-      fallbackArtId: 'copos-termicos',
-      caption:
-        'Personalizamos ideias, criamos conexões! Copos térmicos pretos com gravação a laser permanente para CTGs, eventos tradicionalistas e empresas do RS.',
-      waMessage:
-        'Olá! Vi os Copos Térmicos gravados a laser do CTG no site e gostaria de orçar para meu evento/empresa.'
-    },
-    {
-      id: 'post-calendarios-2027',
-      title: 'Linha de Calendários 2027 — Mesa Wire-O & Parede',
-      badge: 'Temporada 2027',
-      type: 'Post • Gráfica Rápida',
-      highlights: ['Adesivos'],
-      image: 'assets/instagram/post-calendarios-2027.jpg',
-      fallbackArtId: 'calendarios-2027',
-      caption:
-        'Seu cliente lembrará de você todos os dias do ano! Calendários 2027 com acabamento impecável para fidelizar clientes nas festas de fim de ano.',
-      waMessage:
-        'Olá! Vi a Linha de Calendários 2027 no portfólio do site e quero fazer um orçamento.'
-    },
-    {
-      id: 'post-camisetas-natal',
-      title: 'Camisetas Personalizadas — Natal da Família & Equipes',
-      badge: 'Vestuário & Datas',
-      type: 'Reel • Estamparia HD',
-      highlights: ['Camisetas'],
-      image: 'assets/instagram/post-camisetas-natal.jpg',
-      fallbackArtId: 'camisetas-uniformes',
-      caption:
-        'Cores vibrantes e tecido super confortável! Fazemos camisetas temáticas para o Natal da Família, encontros, eventos e uniformes empresariais.',
-      waMessage:
-        'Olá! Vi as Camisetas Personalizadas no portfólio do site e gostaria de solicitar um orçamento.'
-    },
-    {
-      id: 'post-kits-mousepad',
-      title: 'Kits Corporativos: Mouse Pad, Moletons & Camisetas',
-      badge: 'Kits & Presentes',
-      type: 'Reel • Produção Origem',
-      highlights: ['Camisetas', 'Toalhas', 'Canecas'],
-      image: 'assets/instagram/post-kits-mousepad.jpg',
-      fallbackArtId: 'canecas-chaveiros',
-      caption:
-        'Sua ideia, nossa criação! Montamos kits personalizados com mouse pad, moletons, camisetas, chaveirinhos e toalhas com a identidade do seu negócio.',
-      waMessage:
-        'Olá! Vi o Kit de Mouse Pad, Moletons e Camisetas no site e gostaria de orçar um kit personalizado.'
-    },
-    {
-      id: 'post-catalogo-geral',
-      title: 'Vitrine Completa: Capachos, Quadros, Banners & Gráfica',
-      badge: 'Solução Completa',
-      type: 'Destaque • Capão da Canoa',
-      highlights: ['Adesivos', 'Quadros', 'Tapetes', 'Bandeira'],
-      image: 'assets/instagram/post-catalogo-geral.jpg',
-      fallbackArtId: 'tapetes-capachos',
-      caption:
-        'Impressos feitos para deixar sua marca: tapetes capachos vulcanizados, quadrinhos decorativos, WindBanners, adesivos vinílicos e papelaria completa.',
-      waMessage:
-        'Olá! Vi a vitrine completa da Origem Personalizados RS no site e gostaria de fazer um orçamento.'
-    }
-  ];
-
-  /* --------------------------------------------------------------------------
-     4. HOW IT WORKS STEPS & FAQ DATA
-     -------------------------------------------------------------------------- */
   const HOW_IT_WORKS_STEPS = [
     {
       number: '01',
       icon: 'message-circle',
       title: 'Chame no WhatsApp com sua ideia',
       desc: 'Conte o que você deseja personalizar e a quantidade aproximada. Mesmo que você ainda não tenha logotipo ou arquivo aberto, nós ajudamos em tudo!',
-      pill: 'Atendimento humano e rápido'
+      pill: 'Atendimento direto e rápido'
     },
     {
       number: '02',
@@ -602,14 +490,14 @@
       number: '03',
       icon: 'printer',
       title: 'Produção caprichada em alta definição',
-      desc: 'Com a arte aprovada, seu pedido entra em produção utilizando gravação a laser, impressão digital HD ou sublimação com rigoroso controle de qualidade.',
-      pill: 'Acabamento premium'
+      desc: 'Com a arte aprovada, seu pedido entra em produção utilizando gravação a laser permanente, impressão digital HD ou sublimação.',
+      pill: 'Acabamento durável'
     },
     {
       number: '04',
       icon: 'truck',
       title: 'Retirada em Capão da Canoa ou Entrega',
-      desc: 'Seu pedido fica pronto rapidinho! Você pode retirar em Capão da Canoa - RS ou receber com agilidade em todo o Litoral Norte e Rio Grande do Sul.',
+      desc: 'Você pode retirar em Capão da Canoa - RS ou receber com rapidez em todo o Litoral Norte e Rio Grande do Sul.',
       pill: 'Capão da Canoa & Região'
     }
   ];
@@ -633,7 +521,7 @@
     {
       question: 'Qual o prazo de produção e quais as formas de pagamento aceitas?',
       answer:
-        'Nosso prazo é super ágil e varia conforme o produto e a quantidade escolhida — informamos o prazo exato já no seu orçamento pelo WhatsApp. Aceitamos PIX, cartões e condições facilitadas para pedidos empresariais.'
+        'Nosso prazo varia conforme o produto e a quantidade escolhida — informamos o prazo exato no seu orçamento pelo WhatsApp. Aceitamos PIX, cartões e condições facilitadas para pedidos empresariais.'
     },
     {
       question: 'A gravação dos copos térmicos e os adesivos saem na água?',
@@ -643,128 +531,282 @@
   ];
 
   /* --------------------------------------------------------------------------
-     HELPER: Retrieve Product Artwork (OrigemVisuals or Bespoke SVG Fallback)
+     HELPERS
      -------------------------------------------------------------------------- */
-  function getProductVisualMarkup(productId) {
+  function escapeHtml(str) {
+    if (str == null) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function normalizeStr(str) {
+    return String(str || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
+  }
+
+  function buildWhatsAppUrl(message, business) {
+    const rawNumber = business && business.whatsapp ? String(business.whatsapp) : DEFAULT_BUSINESS.whatsapp;
+    const phoneDigits = rawNumber.replace(/\D/g, '') || '5551980577025';
+    return `https://wa.me/${phoneDigits}?text=${encodeURIComponent(message || '')}`;
+  }
+
+  function getWhatsAppDirectLink(business) {
+    return (business && business.whatsappLink) || DEFAULT_BUSINESS.whatsappLink;
+  }
+
+  function getInstagramUrl(business) {
+    const handle = (business && business.instagram ? String(business.instagram).replace(/^@/, '') : '') || DEFAULT_BUSINESS.instagram;
+    return `https://www.instagram.com/${handle}/`;
+  }
+
+  function formatPrice(val) {
+    if (!val || typeof val !== 'string' || val.trim() === '') return '';
+    const trimmed = val.trim();
+    if (/^r\$/i.test(trimmed)) return trimmed;
+    return `R$ ${trimmed}`;
+  }
+
+  function getInstagramShortcode(urlOrCode) {
+    if (!urlOrCode) return '';
+    const str = String(urlOrCode).trim();
+    if (/^[A-Za-z0-9_-]{9,15}$/.test(str)) {
+      return str;
+    }
+    const match = str.match(/\/(?:p|reel|tv)\/([A-Za-z0-9_-]+)/i);
+    if (match && match[1]) {
+      return match[1];
+    }
+    return '';
+  }
+
+  function getProductVisualMarkup(artId, fallbackId) {
     try {
-      if (
-        window.OrigemVisuals &&
-        typeof window.OrigemVisuals.getProductArt === 'function'
-      ) {
-        const externalArt = window.OrigemVisuals.getProductArt(productId);
+      if (window.OrigemVisuals && typeof window.OrigemVisuals.getProductArt === 'function') {
+        const externalArt = window.OrigemVisuals.getProductArt(artId || fallbackId);
         if (externalArt && typeof externalArt === 'string' && externalArt.trim().length > 0) {
           return externalArt;
         }
       }
     } catch (err) {
-      console.warn('[OrigemCatalog] Fallback SVG used for', productId, err);
+      console.warn('[OrigemCatalog] Fallback SVG used for', artId, err);
     }
-    return FALLBACK_PRODUCT_SVGS[productId] || FALLBACK_PRODUCT_SVGS['copos-termicos'];
+    return (
+      FALLBACK_PRODUCT_SVGS[artId] ||
+      FALLBACK_PRODUCT_SVGS[fallbackId] ||
+      FALLBACK_PRODUCT_SVGS['copos-termicos']
+    );
+  }
+
+  function matchesCategory(productCategory, filterId, filterLabel) {
+    if (!filterId || filterId === 'todos' || filterId === 'Todos') return true;
+    const pCat = normalizeStr(productCategory);
+    const fId = normalizeStr(filterId);
+    const fLbl = normalizeStr(filterLabel);
+    return (
+      pCat === fId ||
+      pCat === fLbl ||
+      pCat.includes(fId) ||
+      fId.includes(pCat) ||
+      (fLbl && pCat.includes(fLbl))
+    );
+  }
+
+  function getSimCategoryForProduct(product) {
+    if (product.simulatorCategory) return product.simulatorCategory;
+    const searchTarget = normalizeStr(
+      (product.category || '') + ' ' + (product.id || '') + ' ' + (product.name || '')
+    );
+    for (const opt of SIM_STEP_1_ITEMS) {
+      if (opt.matchKeys && opt.matchKeys.some((k) => searchTarget.includes(k))) {
+        return opt.id;
+      }
+    }
+    return SIM_STEP_1_ITEMS[0].id;
   }
 
   /* --------------------------------------------------------------------------
-     SECTION 1 RENDER & BIND: #catalogo-section
+     STATE & ACTIVE CONTENT HOLDER
      -------------------------------------------------------------------------- */
-  function renderCatalogoSection() {
+  let currentContent = null;
+
+  /* --------------------------------------------------------------------------
+     SECTION 1: #catalogo-section
+     -------------------------------------------------------------------------- */
+  function renderCatalogoSection(content) {
     const container = document.getElementById('catalogo-section');
     if (!container) return;
 
-    // Count items per filter
-    const getCategoryCount = (catId) => {
-      if (catId === 'Todos') return CATALOG_PRODUCTS.length;
-      return CATALOG_PRODUCTS.filter((p) => p.category === catId).length;
+    const business = content.business || DEFAULT_BUSINESS;
+
+    // Filter only visible products and sort by order
+    const rawProducts = Array.isArray(content.products) && content.products.length > 0
+      ? content.products
+      : DEFAULT_PRODUCTS;
+
+    const visibleProducts = rawProducts
+      .filter((p) => p.visible !== false)
+      .sort((a, b) => (Number(a.order) || 999) - (Number(b.order) || 999));
+
+    // Resolve categories
+    const rawCategories = Array.isArray(content.categories) && content.categories.length > 0
+      ? content.categories
+      : DEFAULT_CATEGORIES;
+
+    const hasTodos = rawCategories.some((c) => normalizeStr(c.id) === 'todos');
+    const categories = hasTodos
+      ? rawCategories
+      : [{ id: 'todos', label: 'Todos', icon: 'layout-grid' }, ...rawCategories];
+
+    const categoryIconMap = {
+      todos: 'layout-grid',
+      brindes: 'cup-soda',
+      grafica: 'calendar-days',
+      comunicacao: 'flag',
+      vestuario: 'shirt',
+      decoracao: 'frame'
     };
 
-    const filterTabsHtml = FILTER_TABS.map((tab, idx) => {
-      const count = getCategoryCount(tab.id);
-      const activeClass = idx === 0 ? 'is-active' : '';
-      return `
-        <button
-          type="button"
-          class="filter-pill catalog-tab ${activeClass}"
-          data-filter="${tab.id}"
-          role="tab"
-          aria-selected="${idx === 0 ? 'true' : 'false'}"
-        >
-          <i data-lucide="${tab.icon}"></i>
-          <span>${tab.label}</span>
-          <span class="filter-pill-count">${count}</span>
-        </button>
-      `;
-    }).join('');
+    const getCategoryCount = (cat) => {
+      if (normalizeStr(cat.id) === 'todos') return visibleProducts.length;
+      return visibleProducts.filter((p) => matchesCategory(p.category, cat.id, cat.label)).length;
+    };
 
-    const cardsHtml = CATALOG_PRODUCTS.map((item) => {
-      const badgeClass = item.badgeStyle === 'sage' ? 'badge-sage' : '';
-      const wideClass = item.bentoWide ? 'bento-wide' : '';
-      const artHtml = getProductVisualMarkup(item.id);
-      const waHref = buildWhatsAppUrl(item.waMessage);
+    const filterTabsHtml = categories
+      .map((tab, idx) => {
+        const count = getCategoryCount(tab);
+        const icon = tab.icon || categoryIconMap[normalizeStr(tab.id)] || 'tag';
+        const activeClass = idx === 0 ? 'is-active' : '';
+        return `
+          <button
+            type="button"
+            class="filter-pill catalog-tab ${activeClass}"
+            data-filter="${escapeHtml(tab.id)}"
+            data-filter-label="${escapeHtml(tab.label)}"
+            role="tab"
+            aria-selected="${idx === 0 ? 'true' : 'false'}"
+          >
+            <i data-lucide="${icon}"></i>
+            <span>${escapeHtml(tab.label)}</span>
+            <span class="filter-pill-count">${count}</span>
+          </button>
+        `;
+      })
+      .join('');
 
-      const specsHtml = item.specs
-        .map(
-          (spec) => `
-          <span class="catalog-spec-chip">
-            <i data-lucide="check"></i>
-            <span>${spec}</span>
-          </span>`
-        )
-        .join('');
+    const cardsHtml = visibleProducts
+      .map((item, idx) => {
+        const wideClass = item.bentoWide || idx < 2 ? 'bento-wide' : '';
+        const badgeClass = item.badgeStyle === 'sage' ? 'badge-sage' : '';
+        const simPreselect = getSimCategoryForProduct(item);
 
-      return `
-        <article
-          class="catalog-card bento-card ${wideClass}"
-          data-category="${item.category}"
-          data-product-id="${item.id}"
-        >
-          <span class="fx-crop-mark tl" aria-hidden="true"></span>
-          <span class="fx-crop-mark br" aria-hidden="true"></span>
+        const waMsg = `Olá Origem Personalizados! Vim pelo site e gostaria de fazer um orçamento de ${item.name || 'personalizados'}.`;
+        const waHref = buildWhatsAppUrl(waMsg, business);
 
-          <div class="catalog-card-visual">
-            <div class="catalog-card-badges">
-              <span class="catalog-category-tag">${item.category}</span>
-              ${
-                item.badge
-                  ? `<span class="catalog-badge-highlight ${badgeClass}">${item.badge}</span>`
-                  : ''
-              }
+        // Visual: real photo or fallback SVG
+        const hasPhoto = Boolean(item.image && typeof item.image === 'string' && item.image.trim() !== '');
+
+        const visualHtml = hasPhoto
+          ? `
+            <div class="catalog-card-photo-wrap">
+              <img
+                src="${escapeHtml(item.image)}"
+                alt="${escapeHtml(item.name || '')} - Origem Personalizados RS"
+                class="catalog-product-photo"
+                loading="lazy"
+                data-fallback-art="${escapeHtml(item.artId || item.id)}"
+              />
             </div>
+          `
+          : `
             <div class="catalog-art-canvas">
-              ${artHtml}
+              ${getProductVisualMarkup(item.artId || item.id)}
             </div>
-          </div>
+          `;
 
-          <div class="catalog-card-body">
-            <h3 class="catalog-card-title">${item.title}</h3>
-            <p class="catalog-card-desc">${item.description}</p>
+        // Price badge (only if priceFrom is non-empty)
+        const formattedPrice = formatPrice(item.priceFrom);
+        const priceHtml = formattedPrice
+          ? `
+            <div class="catalog-price-tag">
+              <span class="catalog-price-prefix">A partir de</span>
+              <strong class="catalog-price-amount">${escapeHtml(formattedPrice)}</strong>
+            </div>
+          `
+          : '';
 
-            <div class="catalog-specs-list">
-              ${specsHtml}
+        // Specs chips
+        const specs = Array.isArray(item.specs) ? item.specs : [];
+        const specsHtml = specs
+          .map(
+            (spec) => `
+            <span class="catalog-spec-chip">
+              <i data-lucide="check"></i>
+              <span>${escapeHtml(spec)}</span>
+            </span>`
+          )
+          .join('');
+
+        return `
+          <article
+            class="catalog-card bento-card ${wideClass}"
+            data-category="${escapeHtml(item.category || '')}"
+            data-product-id="${escapeHtml(item.id)}"
+          >
+            <span class="fx-crop-mark tl" aria-hidden="true"></span>
+            <span class="fx-crop-mark br" aria-hidden="true"></span>
+
+            <div class="catalog-card-visual">
+              <div class="catalog-card-badges">
+                <span class="catalog-category-tag">${escapeHtml(item.category || 'Personalizados')}</span>
+                ${
+                  item.badge
+                    ? `<span class="catalog-badge-highlight ${badgeClass}">${escapeHtml(item.badge)}</span>`
+                    : ''
+                }
+              </div>
+              ${visualHtml}
             </div>
 
-            <div class="catalog-card-actions">
-              <a
-                href="${waHref}"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="btn-catalog-wa btn-magnetic"
-                aria-label="Orçar ${item.title} no WhatsApp"
-              >
-                <i data-lucide="message-circle"></i>
-                <span>Orçar este item no WhatsApp</span>
-              </a>
-              <button
-                type="button"
-                class="btn-catalog-sim"
-                data-sim-preselect="${item.simulatorCategory}"
-                title="Simular pedido deste item no configurador"
-                aria-label="Simular ${item.title} no configurador"
-              >
-                <i data-lucide="sliders-horizontal"></i>
-              </button>
+            <div class="catalog-card-body">
+              <h3 class="catalog-card-title">${escapeHtml(item.name || item.title || '')}</h3>
+              <p class="catalog-card-desc">${escapeHtml(item.description || '')}</p>
+              ${priceHtml}
+
+              ${specsHtml ? `<div class="catalog-specs-list">${specsHtml}</div>` : ''}
+
+              <div class="catalog-card-actions">
+                <a
+                  href="${waHref}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn-catalog-wa btn-magnetic"
+                  aria-label="Orçar ${escapeHtml(item.name || '')} no WhatsApp"
+                >
+                  <i data-lucide="message-circle"></i>
+                  <span>Orçar no WhatsApp</span>
+                </a>
+                <button
+                  type="button"
+                  class="btn-catalog-sim"
+                  data-sim-preselect="${escapeHtml(simPreselect)}"
+                  title="Simular pedido deste item no configurador"
+                  aria-label="Simular ${escapeHtml(item.name || '')} no configurador"
+                >
+                  <i data-lucide="sliders-horizontal"></i>
+                </button>
+              </div>
             </div>
-          </div>
-        </article>
-      `;
-    }).join('');
+          </article>
+        `;
+      })
+      .join('');
 
     container.innerHTML = `
       <div class="container">
@@ -797,12 +839,12 @@
               <i data-lucide="sparkles"></i>
             </div>
             <div>
-              <h3>Procurando algum personalizado diferente ou pacote empresarial?</h3>
-              <p>Fazemos tags, cadernos corporativos, sacolas, brindes para eventos e projetos sob medida em Capão da Canoa e região.</p>
+              <h3>Procurando algum personalizado sob medida ou pacote empresarial?</h3>
+              <p>Fazemos tags, sacolas, cadernos corporativos, brindes para eventos e projetos especiais em Capão da Canoa e região.</p>
             </div>
           </div>
           <a
-            href="${buildWhatsAppUrl('Olá Origem Personalizados! Vim pelo site e gostaria de consultar um item personalizado sob medida.')}"
+            href="${buildWhatsAppUrl('Olá Origem Personalizados! Vim pelo site e gostaria de consultar um item personalizado sob medida.', business)}"
             target="_blank"
             rel="noopener noreferrer"
             class="btn btn-primary btn-magnetic"
@@ -814,6 +856,23 @@
       </div>
     `;
 
+    // Robust Photo Error Fallback
+    const photoImgs = container.querySelectorAll('.catalog-product-photo');
+    photoImgs.forEach((img) => {
+      const handleImageError = () => {
+        const wrap = img.parentElement;
+        if (!wrap || wrap.dataset.fallbackApplied === 'true') return;
+        wrap.dataset.fallbackApplied = 'true';
+        wrap.className = 'catalog-art-canvas';
+        const artKey = img.getAttribute('data-fallback-art') || 'copos-termicos';
+        wrap.innerHTML = getProductVisualMarkup(artKey);
+      };
+      img.addEventListener('error', handleImageError);
+      if (img.complete && img.naturalWidth === 0) {
+        handleImageError();
+      }
+    });
+
     // Bind Filter Tabs Interactivity
     const filterButtons = container.querySelectorAll('.filter-pill');
     const gridEl = container.querySelector('#catalog-bento-grid');
@@ -821,7 +880,8 @@
 
     filterButtons.forEach((btn) => {
       btn.addEventListener('click', () => {
-        const selectedCategory = btn.getAttribute('data-filter') || 'Todos';
+        const selectedId = btn.getAttribute('data-filter') || 'todos';
+        const selectedLabel = btn.getAttribute('data-filter-label') || '';
 
         filterButtons.forEach((b) => {
           const active = b === btn;
@@ -829,18 +889,18 @@
           b.setAttribute('aria-selected', active ? 'true' : 'false');
         });
 
+        const isAll = normalizeStr(selectedId) === 'todos';
         if (gridEl) {
-          gridEl.classList.toggle('is-filtered', selectedCategory !== 'Todos');
+          gridEl.classList.toggle('is-filtered', !isAll);
         }
 
         cards.forEach((card) => {
           const cardCat = card.getAttribute('data-category');
-          const matches = selectedCategory === 'Todos' || cardCat === selectedCategory;
+          const matches = matchesCategory(cardCat, selectedId, selectedLabel);
 
           if (matches) {
             card.classList.remove('is-hidden');
             card.classList.remove('fx-filtering-in');
-            // Trigger reflow for clean entrance animation
             void card.offsetWidth;
             card.classList.add('fx-filtering-in');
           } else {
@@ -855,7 +915,7 @@
       });
     });
 
-    // Bind quick "Simular este item" buttons on cards
+    // Bind quick "Simular este item" buttons
     const simPreselectBtns = container.querySelectorAll('[data-sim-preselect]');
     simPreselectBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -875,11 +935,14 @@
   }
 
   /* --------------------------------------------------------------------------
-     SECTION 2 RENDER & BIND: #simulador-section (3-Step Visual Configurator)
+     SECTION 2: #simulador-section (3-Step Configurator)
      -------------------------------------------------------------------------- */
-  function renderSimuladorSection() {
+  function renderSimuladorSection(content) {
     const container = document.getElementById('simulador-section');
     if (!container) return;
+
+    const business = content.business || DEFAULT_BUSINESS;
+    const directWaLink = getWhatsAppDirectLink(business);
 
     const state = {
       step1: 'Brindes/Copos/Canecas',
@@ -894,25 +957,25 @@
         .map((item) => {
           const isSelected = item.id === selectedValue;
           return `
-          <button
-            type="button"
-            class="sim-option-card ${isSelected ? 'is-selected' : ''}"
-            data-step="${stepNum}"
-            data-value="${item.id}"
-            aria-pressed="${isSelected ? 'true' : 'false'}"
-          >
-            <div class="sim-option-top">
-              <div class="sim-option-icon">
-                <i data-lucide="${item.icon}"></i>
+            <button
+              type="button"
+              class="sim-option-card ${isSelected ? 'is-selected' : ''}"
+              data-step="${stepNum}"
+              data-value="${escapeHtml(item.id)}"
+              aria-pressed="${isSelected ? 'true' : 'false'}"
+            >
+              <div class="sim-option-top">
+                <div class="sim-option-icon">
+                  <i data-lucide="${item.icon}"></i>
+                </div>
+                <div class="sim-option-check">
+                  <i data-lucide="check"></i>
+                </div>
               </div>
-              <div class="sim-option-check">
-                <i data-lucide="check"></i>
-              </div>
-            </div>
-            <span class="sim-option-label">${item.label}</span>
-            <span class="sim-option-sub">${item.sub}</span>
-          </button>
-        `;
+              <span class="sim-option-label">${escapeHtml(item.label)}</span>
+              <span class="sim-option-sub">${escapeHtml(item.sub)}</span>
+            </button>
+          `;
         })
         .join('');
 
@@ -969,7 +1032,6 @@
                 ${renderOptionCards(SIM_STEP_3_ART, 3, state.step3)}
               </div>
 
-              <!-- Optional Name & Quantity Inputs -->
               <div class="sim-extra-fields">
                 <div class="sim-field-group">
                   <label for="sim-input-name" class="sim-field-label">Seu nome ou nome da empresa (opcional)</label>
@@ -994,7 +1056,7 @@
                 </div>
 
                 <div class="sim-qty-chips">
-                  <span class="sim-qty-chip-label">Sugestões rápidas de quantidade:</span>
+                  <span class="sim-qty-chip-label">Sugestões rápidas:</span>
                   <button type="button" class="sim-qty-chip" data-qty="1 a 5 unidades (Presente)">1 a 5 un. (Presente)</button>
                   <button type="button" class="sim-qty-chip" data-qty="10 a 30 unidades">10 a 30 un.</button>
                   <button type="button" class="sim-qty-chip" data-qty="50 a 100+ unidades (Lote Empresarial)">50 a 100+ un.</button>
@@ -1012,14 +1074,14 @@
                 <span class="sim-preview-online" aria-hidden="true"></span>
               </div>
               <div class="sim-preview-meta">
-                <h3>Origem Personalizados RS</h3>
-                <span><i data-lucide="check-circle-2"></i> Atendimento Direto • (51) 98057-7025</span>
+                <h3>${escapeHtml(business.name)}</h3>
+                <span><i data-lucide="check-circle-2"></i> Atendimento Direto • ${escapeHtml(business.whatsappDisplay)}</span>
               </div>
             </div>
 
             <div class="sim-whatsapp-window">
               <div class="sim-wa-label">
-                <span>Prévia em tempo real da sua mensagem</span>
+                <span>Prévia em tempo real da mensagem</span>
                 <i data-lucide="smartphone"></i>
               </div>
               <div class="sim-wa-bubble" id="sim-message-preview"></div>
@@ -1032,7 +1094,7 @@
             <div class="sim-summary-pills" id="sim-summary-pills"></div>
 
             <a
-              href="${ buildWhatsAppUrl('Olá Origem Personalizados!') }"
+              href="${buildWhatsAppUrl('Olá Origem Personalizados!', business)}"
               id="sim-whatsapp-submit"
               target="_blank"
               rel="noopener noreferrer"
@@ -1043,13 +1105,13 @@
             </a>
 
             <a
-              href="${WA_DIRECT_LINK}"
+              href="${directWaLink}"
               target="_blank"
               rel="noopener noreferrer"
               class="sim-direct-link"
             >
               <i data-lucide="external-link"></i>
-              <span>Prefere falar direto? Abrir link oficial wa.me/message/L34PQGHRXEMLM1</span>
+              <span>Prefere falar direto? Abrir link do WhatsApp</span>
             </a>
           </aside>
         </div>
@@ -1089,19 +1151,18 @@
       }
 
       if (submitLink) {
-        submitLink.setAttribute('href', buildWhatsAppUrl(fullMessage));
+        submitLink.setAttribute('href', buildWhatsAppUrl(fullMessage, business));
       }
 
       if (summaryPillsEl) {
         summaryPillsEl.innerHTML = `
-          <span class="sim-summary-pill">${state.step1}</span>
-          <span class="sim-summary-pill">${state.step2}</span>
-          <span class="sim-summary-pill">${state.step3}</span>
+          <span class="sim-summary-pill">${escapeHtml(state.step1)}</span>
+          <span class="sim-summary-pill">${escapeHtml(state.step2)}</span>
+          <span class="sim-summary-pill">${escapeHtml(state.step3)}</span>
         `;
       }
     }
 
-    // Bind option cards click
     const optionCards = container.querySelectorAll('.sim-option-card');
     optionCards.forEach((card) => {
       card.addEventListener('click', () => {
@@ -1151,282 +1212,223 @@
   }
 
   /* --------------------------------------------------------------------------
-     SECTION 3 RENDER & BIND: #portfolio-section (Instagram Highlights & Posts)
+     SECTION 3: #portfolio-section (Official Real Instagram Embeds)
      -------------------------------------------------------------------------- */
-  function renderPortfolioSection() {
+  function renderPortfolioSection(content) {
     const container = document.getElementById('portfolio-section');
     if (!container) return;
 
-    // Merge with window.OrigemVisuals.instagramPosts if present, while keeping rich metadata
-    const portfolioItems = DEFAULT_PORTFOLIO_ITEMS.map((item, idx) => {
-      const extPost =
-        window.OrigemVisuals &&
-        Array.isArray(window.OrigemVisuals.instagramPosts) &&
-        window.OrigemVisuals.instagramPosts[idx];
-      return {
-        ...item,
-        image: (extPost && (extPost.localSrc || extPost.src || extPost.image)) || item.image
-      };
-    });
+    const business = content.business || DEFAULT_BUSINESS;
+    const igHandle = (business.instagram || 'origempersonalizadosrs').replace(/^@/, '');
+    const igProfileUrl = `https://www.instagram.com/${igHandle}/`;
 
-    const highlightsHtml = IG_HIGHLIGHTS.map((hl, idx) => {
-      const activeClass = idx === 0 ? 'is-active' : '';
+    const rawPosts = Array.isArray(content.instagramPosts) && content.instagramPosts.length > 0
+      ? content.instagramPosts
+      : DEFAULT_INSTAGRAM_POSTS;
+
+    const visiblePosts = rawPosts.filter((p) => p.visible !== false);
+
+    // Initial limit: show 6 max by default, with option to load all
+    const INITIAL_LIMIT = 6;
+    let showingAll = false;
+
+    function buildPostCardHtml(post) {
+      const shortcode = getInstagramShortcode(post.url || post.id);
+      const postUrl = shortcode ? `https://www.instagram.com/p/${shortcode}/` : igProfileUrl;
+      const captionText = post.caption || 'Trabalho realizado pela Origem Personalizados RS';
+      const waMsg = `Olá Origem! Vi a publicação (${captionText}) no site e gostaria de um orçamento similar.`;
+      const waHref = buildWhatsAppUrl(waMsg, business);
+
       return `
-        <button
-          type="button"
-          class="story-highlight highlight-item ${activeClass}"
-          data-highlight="${hl.id}"
-          aria-pressed="${idx === 0 ? 'true' : 'false'}"
-        >
-          <span class="highlight-ring">
-            <span class="highlight-inner">
-              <i data-lucide="${hl.icon}"></i>
-            </span>
-          </span>
-          <span class="highlight-title">${hl.label}</span>
-        </button>
-      `;
-    }).join('');
-
-    const cardsHtml = portfolioItems
-      .map((post) => {
-        const waHref = buildWhatsAppUrl(post.waMessage);
-        const highlightsAttr = post.highlights.join(',');
-        return `
-        <article
-          class="portfolio-card ig-card"
-          data-highlights="${highlightsAttr}"
-          data-post-id="${post.id}"
-        >
+        <article class="portfolio-card ig-card" data-post-id="${escapeHtml(post.id || shortcode)}">
           <span class="fx-crop-mark tl" aria-hidden="true"></span>
           <span class="fx-crop-mark br" aria-hidden="true"></span>
 
-          <div class="portfolio-media-wrap">
-            <img
-              src="${post.image}"
-              alt="${post.title} - Origem Personalizados RS"
-              class="portfolio-img"
-              loading="lazy"
-              data-fallback-art="${post.fallbackArtId}"
-            />
-            <div class="portfolio-media-overlay">
-              <div class="portfolio-top-badges">
-                <span class="portfolio-tag-pill">${post.badge}</span>
-                <span class="portfolio-reel-badge">
-                  <i data-lucide="instagram"></i>
-                  <span>${post.type}</span>
-                </span>
+          <div class="ig-embed-frame-wrap">
+            <!-- Fallback Tile (Visible while loading or if iframe fails/blocked) -->
+            <div class="ig-fallback-tile">
+              <div class="ig-fallback-icon-wrap">
+                <i data-lucide="instagram"></i>
               </div>
+              <h4 class="ig-fallback-title">Publicação no Instagram</h4>
+              <p class="ig-fallback-caption">${escapeHtml(captionText)}</p>
+              <a
+                href="${postUrl}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="ig-fallback-btn"
+              >
+                <i data-lucide="instagram"></i>
+                <span>Ver no Instagram</span>
+                <i data-lucide="arrow-up-right"></i>
+              </a>
             </div>
+
+            <!-- Official Instagram Embed -->
+            ${
+              shortcode
+                ? `
+                <iframe
+                  src="https://www.instagram.com/p/${shortcode}/embed/"
+                  class="ig-embed-iframe"
+                  title="Post do Instagram @${igHandle} - ${escapeHtml(captionText)}"
+                  loading="lazy"
+                  frameborder="0"
+                  scrolling="no"
+                  allowtransparency="true"
+                ></iframe>
+              `
+                : ''
+            }
           </div>
 
-          <div class="portfolio-card-body">
-            <h3 class="portfolio-card-title">${post.title}</h3>
-            <p class="portfolio-card-caption">${post.caption}</p>
-
-            <div class="portfolio-card-footer">
+          <div class="ig-card-footer">
+            <div class="ig-card-caption-line">
+              <p class="ig-card-caption" title="${escapeHtml(captionText)}">
+                ${escapeHtml(captionText)}
+              </p>
+            </div>
+            <div class="ig-card-actions">
               <a
                 href="${waHref}"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="portfolio-wa-link"
+                class="btn-ig-card-wa"
+                title="Orçar item similar no WhatsApp"
               >
                 <i data-lucide="message-circle"></i>
-                <span>Quero um igual no WhatsApp</span>
+                <span>Orçar similar</span>
               </a>
-
               <a
-                href="${IG_URL}"
+                href="${postUrl}"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="portfolio-ig-ext"
-                aria-label="Ver no Instagram @origempersonalizadosrs"
+                class="btn-ig-card-ext"
+                aria-label="Abrir post original no Instagram"
+                title="Abrir no Instagram"
               >
-                <span>@origempersonalizadosrs</span>
                 <i data-lucide="arrow-up-right"></i>
               </a>
             </div>
           </div>
         </article>
       `;
-      })
-      .join('');
+    }
 
-    container.innerHTML = `
-      <div class="container">
-        <div class="section-header">
-          <span class="section-eyebrow">
-            <i data-lucide="camera"></i>
-            Portfólio Real &amp; Destaques do Instagram
-          </span>
-          <h2 class="section-title">
-            Trabalhos reais que saem da nossa produção em <span class="text-serif-accent">Capão da Canoa • RS</span>
-          </h2>
-          <p class="section-description">
-            Confira alguns dos projetos recentes publicados no nosso perfil oficial <strong>@origempersonalizadosrs</strong> e inspire-se para o seu pedido!
-          </p>
-        </div>
+    function renderGridContent() {
+      const postsToRender = showingAll ? visiblePosts : visiblePosts.slice(0, INITIAL_LIMIT);
+      const cardsHtml = postsToRender.map(buildPostCardHtml).join('');
+      const hasMore = visiblePosts.length > INITIAL_LIMIT;
 
-        <!-- Instagram Profile Header Card -->
-        <div class="ig-profile-card ig-profile-header">
-          <div class="ig-profile-left">
-            <a href="${IG_URL}" target="_blank" rel="noopener noreferrer" class="ig-avatar-ring" aria-label="Instagram @origempersonalizadosrs">
-              <div class="ig-avatar-inner">
-                <img src="assets/logo-origem.svg" alt="Logo Origem Personalizados RS" />
+      container.innerHTML = `
+        <div class="container">
+          <div class="section-header">
+            <span class="section-eyebrow">
+              <i data-lucide="camera"></i>
+              Portfólio Real • Instagram Oficial
+            </span>
+            <h2 class="section-title">
+              Acompanhe nossa produção em <span class="text-serif-accent">Capão da Canoa • RS</span>
+            </h2>
+            <p class="section-description">
+              Confira os trabalhos reais que saem todos os dias do nosso ateliê para clientes de todo o Rio Grande do Sul.
+            </p>
+          </div>
+
+          <!-- Clean Profile Header Card -->
+          <div class="ig-profile-card">
+            <div class="ig-profile-left">
+              <a href="${igProfileUrl}" target="_blank" rel="noopener noreferrer" class="ig-avatar-ring" aria-label="Instagram @${igHandle}">
+                <div class="ig-avatar-inner">
+                  <img src="assets/logo-origem.svg" alt="Logo Origem Personalizados RS" />
+                </div>
+              </a>
+              <div class="ig-profile-info">
+                <div class="ig-handle-row">
+                  <span class="ig-handle-name">@${igHandle}</span>
+                  <span class="ig-verified-pill">
+                    <i data-lucide="map-pin"></i>
+                    ${escapeHtml(business.city || 'Capão da Canoa • RS')}
+                  </span>
+                </div>
+                <p class="ig-bio-text">
+                  <strong>${escapeHtml(business.name)}</strong> • ${escapeHtml(business.slogan || 'Sua ideia, nossa criação!')} ${escapeHtml(business.tagline || 'Impressos feitos para deixar sua marca.')}
+                </p>
               </div>
-            </a>
-            <div class="ig-profile-info">
-              <div class="ig-handle-row">
-                <span class="ig-handle-name">@origempersonalizadosrs</span>
-                <span class="ig-verified-pill">
-                  <i data-lucide="map-pin"></i>
-                  Capão da Canoa • RS
-                </span>
-              </div>
-              <p class="ig-bio-text">
-                <strong>ORIGEM PERSONALIZADOS</strong> • Impressos feitos para deixar sua marca! Criação de Arte • Impressão Digital • Brindes, Copos Térmicos, Calendários 2027, Camisetas e Comunicação Visual.
-              </p>
+            </div>
+
+            <div class="ig-profile-actions">
+              <a
+                href="${igProfileUrl}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn-ig-follow btn-magnetic"
+              >
+                <i data-lucide="instagram"></i>
+                <span>Seguir no Instagram</span>
+                <i data-lucide="arrow-up-right"></i>
+              </a>
             </div>
           </div>
 
-          <div class="ig-profile-actions">
+          <!-- Responsive Grid of Real Instagram Posts -->
+          <div class="portfolio-grid" id="portfolio-grid">
+            ${cardsHtml}
+          </div>
+
+          <!-- Bottom Actions -->
+          <div class="portfolio-footer-actions">
+            ${
+              hasMore && !showingAll
+                ? `
+                <button type="button" class="btn btn-outline-dark btn-lg" id="btn-ig-load-all">
+                  <i data-lucide="grid"></i>
+                  <span>Ver todas as publicações (${visiblePosts.length})</span>
+                </button>
+              `
+                : ''
+            }
             <a
-              href="${IG_URL}"
+              href="${igProfileUrl}"
               target="_blank"
               rel="noopener noreferrer"
-              class="btn-ig-follow btn-magnetic"
+              class="btn btn-primary btn-lg btn-magnetic"
             >
               <i data-lucide="instagram"></i>
-              <span>Seguir @origempersonalizadosrs</span>
+              <span>Ver perfil completo no Instagram @${igHandle}</span>
+              <i data-lucide="arrow-up-right"></i>
             </a>
           </div>
         </div>
+      `;
 
-        <!-- Story Highlights Row -->
-        <div class="ig-highlights-wrapper">
-          <div class="ig-highlights-label">
-            <i data-lucide="sparkles"></i>
-            <span>Destaques dos Stories — Toque em um destaque para filtrar:</span>
-          </div>
-          <div class="ig-highlights-row" role="toolbar" aria-label="Destaques do Instagram">
-            ${highlightsHtml}
-          </div>
-        </div>
-
-        <!-- Active Story Highlight Info Strip -->
-        <div class="ig-active-story-banner" id="ig-active-story-banner">
-          <div class="ig-story-banner-info">
-            <i data-lucide="check-circle-2"></i>
-            <span id="ig-story-banner-text">Destaque selecionado</span>
-          </div>
-          <div class="ig-story-banner-actions">
-            <a
-              href="${buildWhatsAppUrl('Olá! Vi os destaques no site da Origem Personalizados e quero fazer um orçamento.')}"
-              id="ig-story-banner-wa"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn btn-primary"
-              style="padding: 0.45rem 0.95rem; font-size: 0.82rem;"
-            >
-              <i data-lucide="message-circle"></i>
-              <span>Orçar este Destaque</span>
-            </a>
-            <button type="button" class="btn-story-reset" id="ig-story-reset-btn">
-              Mostrar Todos
-            </button>
-          </div>
-        </div>
-
-        <!-- 6 Real Showcase Cards Grid -->
-        <div class="portfolio-grid" id="portfolio-grid">
-          ${cardsHtml}
-        </div>
-      </div>
-    `;
-
-    // Bulletproof Image Fallback Handler (Zero broken images guarantee)
-    const images = container.querySelectorAll('.portfolio-img');
-    images.forEach((img) => {
-      const replaceWithSvgFallback = () => {
-        const artId = img.getAttribute('data-fallback-art') || 'copos-termicos';
-        const wrap = img.parentElement;
-        if (!wrap || wrap.dataset.fallbackApplied === 'true') return;
-        wrap.dataset.fallbackApplied = 'true';
-        const fallbackDiv = document.createElement('div');
-        fallbackDiv.className = 'portfolio-svg-fallback';
-        fallbackDiv.innerHTML = getProductVisualMarkup(artId);
-        img.replaceWith(fallbackDiv);
-      };
-
-      img.addEventListener('error', replaceWithSvgFallback);
-      if (img.complete && img.naturalWidth === 0) {
-        replaceWithSvgFallback();
-      }
-    });
-
-    // Story Highlights Filter/Highlight Interactivity
-    const highlightBtns = container.querySelectorAll('.story-highlight');
-    const portfolioCards = container.querySelectorAll('.portfolio-card');
-    const bannerEl = container.querySelector('#ig-active-story-banner');
-    const bannerTextEl = container.querySelector('#ig-story-banner-text');
-    const bannerWaEl = container.querySelector('#ig-story-banner-wa');
-    const resetBtn = container.querySelector('#ig-story-reset-btn');
-
-    function applyHighlightFilter(hlId) {
-      const hlObj = IG_HIGHLIGHTS.find((h) => h.id === hlId) || IG_HIGHLIGHTS[0];
-
-      highlightBtns.forEach((btn) => {
-        const active = btn.getAttribute('data-highlight') === hlId;
-        btn.classList.toggle('is-active', active);
-        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
-      });
-
-      if (hlId === 'Todos') {
-        if (bannerEl) bannerEl.classList.remove('is-visible');
-        portfolioCards.forEach((card) => {
-          card.classList.remove('is-dimmed', 'is-highlighted');
-        });
-      } else {
-        if (bannerEl && bannerTextEl && bannerWaEl) {
-          bannerTextEl.innerHTML = `<strong>Destaque ${hlObj.label}:</strong> ${hlObj.desc}`;
-          bannerWaEl.setAttribute(
-            'href',
-            buildWhatsAppUrl(hlObj.waText || `Olá! Gostaria de orçar ${hlObj.label}.`)
-          );
-          bannerEl.classList.add('is-visible');
-        }
-
-        let firstMatched = null;
-        portfolioCards.forEach((card) => {
-          const tags = (card.getAttribute('data-highlights') || '').split(',');
-          const isMatch = tags.includes(hlId);
-          card.classList.toggle('is-highlighted', isMatch);
-          card.classList.toggle('is-dimmed', !isMatch);
-          if (isMatch && !firstMatched) {
-            firstMatched = card;
+      // Bind Load All button if present
+      const loadAllBtn = container.querySelector('#btn-ig-load-all');
+      if (loadAllBtn) {
+        loadAllBtn.addEventListener('click', () => {
+          showingAll = true;
+          renderGridContent();
+          if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            window.lucide.createIcons();
+          }
+          if (window.OrigemAnimations && typeof window.OrigemAnimations.refresh === 'function') {
+            window.OrigemAnimations.refresh();
           }
         });
       }
     }
 
-    highlightBtns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const hlId = btn.getAttribute('data-highlight') || 'Todos';
-        applyHighlightFilter(hlId);
-      });
-    });
-
-    if (resetBtn) {
-      resetBtn.addEventListener('click', () => applyHighlightFilter('Todos'));
-    }
+    renderGridContent();
   }
 
   /* --------------------------------------------------------------------------
-     SECTION 4 RENDER & BIND: #como-funciona-section (4 Steps + FAQ Accordion)
+     SECTION 4: #como-funciona-section (4 Steps + FAQ)
      -------------------------------------------------------------------------- */
-  function renderComoFuncionaSection() {
+  function renderComoFuncionaSection(content) {
     const container = document.getElementById('como-funciona-section');
     if (!container) return;
+
+    const business = content.business || DEFAULT_BUSINESS;
 
     const stepsHtml = HOW_IT_WORKS_STEPS.map(
       (step) => `
@@ -1485,12 +1487,10 @@
           </p>
         </div>
 
-        <!-- 4 Steps Timeline -->
         <div class="steps-timeline-grid">
           ${stepsHtml}
         </div>
 
-        <!-- FAQ Accordion Area -->
         <div class="faq-container">
           <div class="faq-intro-card faq-header">
             <span class="section-eyebrow">
@@ -1502,7 +1502,7 @@
               Respondemos ao lado as perguntas mais comuns de nossos clientes em Capão da Canoa e região. Se preferir, fale direto com a gente no WhatsApp!
             </p>
             <a
-              href="${buildWhatsAppUrl('Olá Origem Personalizados! Vim pelo site e gostaria de tirar uma dúvida sobre personalizados.')}"
+              href="${buildWhatsAppUrl('Olá Origem Personalizados! Vim pelo site e gostaria de tirar uma dúvida sobre personalizados.', business)}"
               target="_blank"
               rel="noopener noreferrer"
               class="btn btn-primary btn-magnetic"
@@ -1519,7 +1519,6 @@
       </div>
     `;
 
-    // Bind FAQ Accordion Interactivity
     const faqItems = container.querySelectorAll('.faq-item');
     faqItems.forEach((item) => {
       const btn = item.querySelector('.faq-question-btn');
@@ -1543,11 +1542,16 @@
   }
 
   /* --------------------------------------------------------------------------
-     SECTION 5 RENDER & BIND: #cta-final-section & #footer-section
+     SECTION 5: #cta-final-section & #footer-section
      -------------------------------------------------------------------------- */
-  function renderCtaAndFooter() {
+  function renderCtaAndFooter(content) {
     const ctaContainer = document.getElementById('cta-final-section');
     const footerContainer = document.getElementById('footer-section');
+
+    const business = content.business || DEFAULT_BUSINESS;
+    const directWaLink = getWhatsAppDirectLink(business);
+    const igProfileUrl = getInstagramUrl(business);
+    const igHandle = (business.instagram || 'origempersonalizadosrs').replace(/^@/, '');
 
     if (ctaContainer) {
       ctaContainer.innerHTML = `
@@ -1556,28 +1560,28 @@
             <div class="cta-final-content">
               <span class="cta-final-badge">
                 <i data-lucide="sparkles"></i>
-                <span>Sua ideia, nossa criação • Capão da Canoa – RS</span>
+                <span>${escapeHtml(business.slogan || 'Sua ideia, nossa criação!')} • ${escapeHtml(business.city || 'Capão da Canoa – RS')}</span>
               </span>
               <h2 class="cta-final-title">
                 Pronto para transformar sua ideia em <span class="text-serif-accent">impressos e brindes que deixam sua marca?</span>
               </h2>
               <p class="cta-final-desc">
-                Chame agora no WhatsApp da <strong>Origem Personalizados RS</strong>! Solicite seu orçamento sem compromisso, receba sugestões para o seu negócio ou presente e aprove sua arte digital antes de produzir.
+                Chame agora no WhatsApp da <strong>${escapeHtml(business.name)}</strong>! Solicite seu orçamento sem compromisso, receba sugestões para o seu negócio ou presente e aprove sua arte digital antes de produzir.
               </p>
 
               <div class="cta-final-actions cta-actions">
                 <a
-                  href="${buildWhatsAppUrl('Olá Origem Personalizados RS! Vim pelo site e quero fazer um orçamento.')}"
+                  href="${buildWhatsAppUrl('Olá Origem Personalizados RS! Vim pelo site e quero fazer um orçamento.', business)}"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="btn-cta-wa btn-magnetic"
                 >
                   <i data-lucide="message-circle"></i>
-                  <span>Falar no WhatsApp (51) 98057-7025</span>
+                  <span>Falar no WhatsApp ${escapeHtml(business.whatsappDisplay)}</span>
                 </a>
 
                 <a
-                  href="${WA_DIRECT_LINK}"
+                  href="${directWaLink}"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="btn btn-outline-light"
@@ -1590,7 +1594,7 @@
 
             <div class="cta-final-card">
               <a
-                href="${buildWhatsAppUrl('Olá Origem Personalizados RS! Gostaria de atendimento pelo WhatsApp.')}"
+                href="${buildWhatsAppUrl('Olá Origem Personalizados RS! Gostaria de atendimento pelo WhatsApp.', business)}"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="cta-contact-row"
@@ -1600,12 +1604,12 @@
                 </div>
                 <div class="cta-contact-info">
                   <small>WhatsApp Comercial &amp; Orçamentos</small>
-                  <strong>(51) 98057-7025</strong>
+                  <strong>${escapeHtml(business.whatsappDisplay)}</strong>
                 </div>
               </a>
 
               <a
-                href="${IG_URL}"
+                href="${igProfileUrl}"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="cta-contact-row"
@@ -1615,12 +1619,12 @@
                 </div>
                 <div class="cta-contact-info">
                   <small>Siga nosso Portfólio Diário</small>
-                  <strong>@origempersonalizadosrs</strong>
+                  <strong>@${igHandle}</strong>
                 </div>
               </a>
 
               <a
-                href="mailto:${EMAIL_ADDRESS}"
+                href="mailto:${escapeHtml(business.email)}"
                 class="cta-contact-row"
               >
                 <div class="cta-contact-icon">
@@ -1628,7 +1632,7 @@
                 </div>
                 <div class="cta-contact-info">
                   <small>Envio de Arquivos &amp; E-mail</small>
-                  <strong>${EMAIL_ADDRESS}</strong>
+                  <strong>${escapeHtml(business.email)}</strong>
                 </div>
               </a>
             </div>
@@ -1647,8 +1651,8 @@
               <a href="#hero-section" class="footer-brand-lockup">
                 <img src="assets/logo-origem.svg" alt="Logo Origem Personalizados RS" />
                 <div>
-                  <span class="footer-brand-name">ORIGEM PERSONALIZADOS</span>
-                  <span class="footer-brand-sub">Impressos feitos para deixar sua marca.</span>
+                  <span class="footer-brand-name">${escapeHtml(business.name)}</span>
+                  <span class="footer-brand-sub">${escapeHtml(business.tagline || 'Impressos feitos para deixar sua marca.')}</span>
                 </div>
               </a>
               <p class="footer-slogan-text">
@@ -1656,7 +1660,7 @@
               </p>
               <span class="footer-location-badge">
                 <i data-lucide="map-pin"></i>
-                <span>Capão da Canoa – RS • Atendemos Litoral Norte e todo o RS</span>
+                <span>${escapeHtml(business.city || 'Capão da Canoa – RS')} • Atendemos Litoral Norte e todo o RS</span>
               </span>
             </div>
 
@@ -1694,28 +1698,28 @@
                   <i data-lucide="message-circle"></i>
                   <div>
                     <strong>WhatsApp:</strong><br />
-                    <a href="${buildWhatsAppUrl('Olá Origem Personalizados RS! Vim pelo site.')}" target="_blank" rel="noopener noreferrer">(51) 98057-7025</a>
+                    <a href="${buildWhatsAppUrl('Olá Origem Personalizados RS! Vim pelo site.', business)}" target="_blank" rel="noopener noreferrer">${escapeHtml(business.whatsappDisplay)}</a>
                   </div>
                 </li>
                 <li class="footer-contact-item">
                   <i data-lucide="mail"></i>
                   <div>
                     <strong>E-mail:</strong><br />
-                    <a href="mailto:${EMAIL_ADDRESS}">${EMAIL_ADDRESS}</a>
+                    <a href="mailto:${escapeHtml(business.email)}">${escapeHtml(business.email)}</a>
                   </div>
                 </li>
                 <li class="footer-contact-item">
                   <i data-lucide="instagram"></i>
                   <div>
                     <strong>Instagram:</strong><br />
-                    <a href="${IG_URL}" target="_blank" rel="noopener noreferrer">@origempersonalizadosrs</a>
+                    <a href="${igProfileUrl}" target="_blank" rel="noopener noreferrer">@${igHandle}</a>
                   </div>
                 </li>
                 <li class="footer-contact-item">
                   <i data-lucide="map-pin"></i>
                   <div>
                     <strong>Localização:</strong><br />
-                    <span>Capão da Canoa – RS</span>
+                    <span>${escapeHtml(business.city || 'Capão da Canoa – RS')}</span>
                   </div>
                 </li>
               </ul>
@@ -1723,8 +1727,12 @@
           </div>
 
           <div class="footer-bottom-bar">
-            <span>&copy; ${currentYear} Origem Personalizados RS (@origempersonalizadosrs). Todos os direitos reservados.</span>
-            <span>Sua ideia, nossa criação! • Capão da Canoa / RS</span>
+            <span>&copy; ${currentYear} ${escapeHtml(business.name)}. Todos os direitos reservados.</span>
+            <span>${escapeHtml(business.slogan || 'Sua ideia, nossa criação!')} • ${escapeHtml(business.city || 'Capão da Canoa - RS')}</span>
+            <a href="admin.html" class="footer-admin-link" title="Área restrita de gerenciamento">
+              <i data-lucide="shield-check"></i>
+              <span>Área do proprietário</span>
+            </a>
           </div>
         </div>
       `;
@@ -1732,19 +1740,23 @@
   }
 
   /* --------------------------------------------------------------------------
-     PUBLIC MODULE INITIALIZER: window.OrigemCatalog.init()
+     RENDER ORCHESTRATOR
      -------------------------------------------------------------------------- */
-  let isInitialized = false;
+  function render(content) {
+    if (content) {
+      currentContent = content;
+    } else if (!currentContent) {
+      currentContent =
+        (window.OrigemStore && typeof window.OrigemStore.get === 'function'
+          ? window.OrigemStore.get()
+          : null) || DEFAULT_CONTENT;
+    }
 
-  function init() {
-    if (isInitialized) return;
-    isInitialized = true;
-
-    renderCatalogoSection();
-    renderSimuladorSection();
-    renderPortfolioSection();
-    renderComoFuncionaSection();
-    renderCtaAndFooter();
+    renderCatalogoSection(currentContent);
+    renderSimuladorSection(currentContent);
+    renderPortfolioSection(currentContent);
+    renderComoFuncionaSection(currentContent);
+    renderCtaAndFooter(currentContent);
 
     if (window.lucide && typeof window.lucide.createIcons === 'function') {
       window.lucide.createIcons();
@@ -1754,9 +1766,43 @@
     }
   }
 
+  function init(content) {
+    render(content);
+  }
+
+  // Auto-subscribe to Store updates
+  window.addEventListener('origem:content', function (e) {
+    if (e && e.detail) {
+      render(e.detail);
+    }
+  });
+
+  if (window.OrigemStore) {
+    if (typeof window.OrigemStore.onChange === 'function') {
+      window.OrigemStore.onChange(function (c) {
+        render(c);
+      });
+    }
+    if (window.OrigemStore.ready && typeof window.OrigemStore.ready.then === 'function') {
+      window.OrigemStore.ready.then(function (c) {
+        render(c);
+      }).catch(function () {});
+    }
+  }
+
+  /* --------------------------------------------------------------------------
+     PUBLIC MODULE INTERFACE
+     -------------------------------------------------------------------------- */
   window.OrigemCatalog = {
     init,
-    products: CATALOG_PRODUCTS,
-    filterTabs: FILTER_TABS
+    render,
+    get products() {
+      const src = currentContent || DEFAULT_CONTENT;
+      return (src.products || []).filter((p) => p.visible !== false);
+    },
+    get filterTabs() {
+      const src = currentContent || DEFAULT_CONTENT;
+      return src.categories || DEFAULT_CATEGORIES;
+    }
   };
 })();

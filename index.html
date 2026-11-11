@@ -31,6 +31,7 @@
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/visuals.css" />
   <link rel="stylesheet" href="css/sections-catalog.css" />
+  <link rel="stylesheet" href="css/frete.css" />
   <link rel="stylesheet" href="css/animations.css" />
 </head>
 <body>
@@ -65,12 +66,14 @@
         <a href="#simulador-section" class="nav-link nav-link-highlight">
           <span class="nav-dot"></span>Simulador
         </a>
+        <a href="#frete-section" class="nav-link">Frete</a>
         <a href="#portfolio-section" class="nav-link">Portfólio</a>
         <a href="#como-funciona-section" class="nav-link">Como Funciona</a>
       </nav>
 
       <div class="navbar-actions">
         <a
+          id="navbar-ig-btn"
           href="https://www.instagram.com/origempersonalizadosrs/"
           target="_blank"
           rel="noopener noreferrer"
@@ -79,10 +82,11 @@
           title="Siga @origempersonalizadosrs no Instagram"
         >
           <i data-lucide="instagram"></i>
-          <span class="nav-social-handle">@origempersonalizadosrs</span>
+          <span class="nav-social-handle" id="navbar-ig-handle">@origempersonalizadosrs</span>
         </a>
 
         <a
+          id="navbar-wa-btn"
           href="https://wa.me/5551980577025?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20Origem%20Personalizados%20RS%20e%20gostaria%20de%20fazer%20um%20or%C3%A7amento."
           target="_blank"
           rel="noopener noreferrer"
@@ -110,6 +114,7 @@
   <main>
     <!-- =====================================================================
          HERO SECTION (#hero-section)
+         Visually centered, balanced composition without invented metrics
          ===================================================================== -->
     <section id="hero-section" class="hero-section">
       <canvas id="hero-canvas" aria-hidden="true"></canvas>
@@ -118,20 +123,20 @@
       <div class="hero-ambient-glow hero-glow-amber" aria-hidden="true"></div>
 
       <div class="container hero-grid">
-        <!-- Left Column: Copy, CTAs & Trust Metrics -->
+        <!-- Left Column: Copy & CTAs -->
         <div class="hero-content">
           <div class="hero-badge">
             <span class="hero-badge-pulse"></span>
             <i data-lucide="map-pin" class="badge-icon"></i>
-            <span>Capão da Canoa • RS | Gráfica Rápida &amp; Personalizados</span>
+            <span id="hero-badge-text">Capão da Canoa • RS | Gráfica Rápida &amp; Personalizados</span>
           </div>
 
           <h1 class="hero-headline">
-            Sua ideia, nossa criação.
-            <em class="hero-headline-serif">Impressos feitos para deixar sua marca.</em>
+            <span id="hero-title-text">Sua ideia, nossa criação.</span>
+            <em class="hero-headline-serif" id="hero-accent-text">Impressos feitos para deixar sua marca.</em>
           </h1>
 
-          <p class="hero-subheadline">
+          <p class="hero-subheadline" id="hero-subtitle-text">
             Personalizamos ideias e criamos conexões! Do presente único ao lote corporativo:
             <strong>copos térmicos gravados a laser, calendários 2027, uniformes, papelaria gráfica, adesivos e fachadas</strong>
             com criação de arte exclusiva e acabamento impecável para empresas, eventos e famílias.
@@ -147,6 +152,7 @@
             </a>
 
             <a
+              id="hero-wa-btn"
               href="https://wa.me/message/L34PQGHRXEMLM1"
               target="_blank"
               rel="noopener noreferrer"
@@ -157,51 +163,10 @@
             </a>
           </div>
 
-          <div class="hero-quick-tags" aria-label="Categorias principais">
-            <a href="#catalogo-section" class="quick-tag"><i data-lucide="check-circle-2"></i> Criamos sua arte do zero</a>
-            <a href="#catalogo-section" class="quick-tag"><i data-lucide="check-circle-2"></i> Pequenas ou grandes quantidades</a>
-            <a href="#catalogo-section" class="quick-tag"><i data-lucide="check-circle-2"></i> Entrega rápida no Litoral Norte e RS</a>
-          </div>
-
-          <!-- Trust Metrics Bar (4 stats with .stat-counter and data-target) -->
-          <div class="hero-metrics-bar" role="region" aria-label="Números da Origem Personalizados RS">
-            <div class="metric-item">
-              <div class="metric-value-wrap">
-                <span class="metric-prefix">+</span>
-                <span class="stat-counter" data-target="1500" data-suffix="">1500</span>
-              </div>
-              <span class="metric-label">Projetos &amp; Personalizados Entregues</span>
-            </div>
-
-            <div class="metric-divider" aria-hidden="true"></div>
-
-            <div class="metric-item">
-              <div class="metric-value-wrap">
-                <span class="stat-counter" data-target="100" data-suffix="">100</span>
-                <span class="metric-suffix">%</span>
-              </div>
-              <span class="metric-label">Criação de Arte Personalizada</span>
-            </div>
-
-            <div class="metric-divider" aria-hidden="true"></div>
-
-            <div class="metric-item">
-              <div class="metric-value-wrap">
-                <span class="metric-prefix">+</span>
-                <span class="stat-counter" data-target="40" data-suffix="">40</span>
-              </div>
-              <span class="metric-label">Opções de Produtos &amp; Impressos</span>
-            </div>
-
-            <div class="metric-divider" aria-hidden="true"></div>
-
-            <div class="metric-item">
-              <div class="metric-value-wrap">
-                <span class="stat-counter" data-target="5" data-suffix="">5</span>
-                <span class="metric-suffix">.0 ★</span>
-              </div>
-              <span class="metric-label">Atendimento Ágil no WhatsApp</span>
-            </div>
+          <div class="hero-quick-tags" aria-label="Diferenciais de atendimento">
+            <span class="quick-tag"><i data-lucide="check-circle-2"></i> Criamos sua arte do zero</span>
+            <span class="quick-tag"><i data-lucide="check-circle-2"></i> Pequenas ou grandes quantidades</span>
+            <span class="quick-tag"><i data-lucide="check-circle-2"></i> Entrega rápida no Litoral Norte e RS</span>
           </div>
         </div>
 
@@ -357,10 +322,11 @@
     </section>
 
     <!-- =====================================================================
-         DYNAMIC SECTIONS POPULATED BY sections-catalog (js/sections-catalog.js)
+         DYNAMIC SECTIONS POPULATED BY sections-catalog & frete
          ===================================================================== -->
     <section id="catalogo-section" class="catalogo-section"></section>
     <section id="simulador-section" class="simulador-section"></section>
+    <section id="frete-section" class="frete-section"></section>
     <section id="portfolio-section" class="portfolio-section"></section>
     <section id="como-funciona-section" class="como-funciona-section"></section>
     <section id="cta-final-section" class="cta-final-section"></section>
@@ -379,10 +345,11 @@
       <button type="button" class="wa-tooltip-close" id="wa-tooltip-close" aria-label="Fechar aviso do WhatsApp">&times;</button>
       <div class="wa-tooltip-header">
         <span class="wa-online-dot"></span>
-        <strong>Origem Personalizados RS</strong>
+        <strong id="wa-tooltip-title">Origem Personalizados RS</strong>
       </div>
-      <p class="wa-tooltip-text">Olá! Quer orçar copos térmicos, calendários 2027, camisetas ou impressos? Chame agora!</p>
+      <p class="wa-tooltip-text" id="wa-tooltip-text">Olá! Quer orçar copos térmicos, calendários 2027, camisetas ou impressos? Chame agora!</p>
       <a
+        id="wa-tooltip-link"
         href="https://wa.me/5551980577025?text=Ol%C3%A1%20Origem%20Personalizados%21%20Vim%20pelo%20site%20e%20quero%20fazer%20um%20or%C3%A7amento."
         target="_blank"
         rel="noopener noreferrer"
@@ -393,11 +360,12 @@
     </div>
 
     <a
+      id="wa-float-btn"
       href="https://wa.me/5551980577025?text=Ol%C3%A1%20Origem%20Personalizados%21%20Vim%20pelo%20site%20e%20gostaria%20de%20um%20or%C3%A7amento."
       target="_blank"
       rel="noopener noreferrer"
       class="wa-float-btn"
-      aria-label="Conversar no WhatsApp (51) 98057-7025"
+      aria-label="Conversar no WhatsApp"
     >
       <span class="wa-pulse-ring" aria-hidden="true"></span>
       <span class="wa-unread-badge">1</span>
@@ -408,15 +376,20 @@
   </div>
 
   <!-- =====================================================================
-       CDN LIBRARIES & APPLICATION SCRIPTS (Strict Load Order)
+       CDN LIBRARIES & APPLICATION SCRIPTS (Strict Load Order per #15)
        ===================================================================== -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
 
+  <!-- Data Layer (Single Source of Truth) -->
+  <script src="js/content-store.js"></script>
+
+  <!-- Application Modules -->
   <script src="js/product-visuals.js"></script>
   <script src="js/sections-catalog.js"></script>
+  <script src="js/frete.js"></script>
   <script src="js/animations.js"></script>
   <script src="js/main.js"></script>
 </body>

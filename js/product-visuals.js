@@ -8,11 +8,23 @@
 (function () {
   'use strict';
 
-  const WHATSAPP_NUMBER = '5551980577025';
+  let currentWhatsAppNumber = '5551980577025';
+  let currentInstagramUrl = 'https://www.instagram.com/origempersonalizadosrs/';
   const INSTAGRAM_PROFILE_URL = 'https://www.instagram.com/origempersonalizadosrs/';
 
+  function updateBusinessData(content) {
+    if (content && content.business) {
+      if (content.business.whatsapp) {
+        currentWhatsAppNumber = String(content.business.whatsapp).replace(/\D/g, '');
+      }
+      if (content.business.instagram) {
+        currentInstagramUrl = `https://www.instagram.com/${String(content.business.instagram).replace(/^@/, '')}/`;
+      }
+    }
+  }
+
   function buildWhatsAppUrl(text) {
-    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+    return `https://wa.me/${currentWhatsAppNumber}?text=${encodeURIComponent(text)}`;
   }
 
   /**
@@ -804,9 +816,10 @@
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return;
     }
+    // Slower, elegant autoplay per UX feedback: 8 seconds per slide
     autoRotateTimer = window.setInterval(() => {
       switchHeroSlide(activeSlideIndex + 1, false);
-    }, 5500);
+    }, 8000);
   }
 
   function stopAutoRotate() {
@@ -839,7 +852,11 @@
   /**
    * 6. INITIALIZE BRAND LOGO & HERO SHOWCASE
    */
-  function init() {
+  function init(content) {
+    if (content) {
+      updateBusinessData(content);
+    }
+
     attachImageFallbackGuard();
 
     const navLogoSlot = document.getElementById('brand-logo-nav');
@@ -853,6 +870,7 @@
   // Expose public API
   window.OrigemVisuals = {
     init,
+    updateBusinessData,
     getProductArt,
     instagramPosts,
     getLogoSvg,

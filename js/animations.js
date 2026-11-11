@@ -1209,7 +1209,8 @@
     let direction = -1;
     let isHovered = false;
     let currentBoost = 0;
-    const baseSpeed = 0.032;
+    // Slower, smooth continuous marquee speed
+    const baseSpeed = 0.018;
 
     banner.addEventListener('pointerenter', () => {
       isHovered = true;

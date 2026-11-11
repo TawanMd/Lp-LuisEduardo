@@ -95,8 +95,8 @@ html.lenis body {
   display: inline-block;
   overflow: hidden;
   vertical-align: bottom;
-  padding-bottom: 0.06em;
-  margin-bottom: -0.06em;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
 }
 
 .anim-word {
@@ -360,7 +360,7 @@ html.lenis body {
 }
 
 .fx-marquee-css-fallback {
-  animation: origemMarqueeFallback 32s linear infinite;
+  animation: origemMarqueeFallback 48s linear infinite;
 }
 
 #marquee-banner:hover .fx-marquee-css-fallback {
