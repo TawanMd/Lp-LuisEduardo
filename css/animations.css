@@ -1,0 +1,477 @@
+/* ==========================================================================
+   ORIGEM PERSONALIZADOS RS — Animations, 3D Tilt, Spotlight & Micro-FX
+   Owned by: animations-fx (css/animations.css)
+   Brand Palette:
+   - Sage / Mint Green: #8FAF85, #9DBE93, #A2C59D
+   - Deep Forest Green: #142418, #1E3524, #2A4732
+   - Warm Off-White:    #F7F9F5, #EDF2EA
+   - Warm Amber / Gold: #D4A359
+   ========================================================================== */
+
+:root {
+  --fx-sage: #8FAF85;
+  --fx-sage-light: #A2C59D;
+  --fx-forest: #142418;
+  --fx-gold: #D4A359;
+  --fx-spotlight-size: 380px;
+  --fx-ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --fx-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* --------------------------------------------------------------------------
+   1. Lenis Smooth Scroll & Scroll Progress Indicator
+   -------------------------------------------------------------------------- */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Top Scroll Reading Progress Bar */
+.origem-scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  z-index: 9999;
+  pointer-events: none;
+  background: transparent;
+}
+
+.origem-scroll-progress-bar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #8FAF85 0%, #D4A359 55%, #A2C59D 100%);
+  transform-origin: 0% 50%;
+  transform: scaleX(0);
+  box-shadow: 0 0 12px rgba(143, 175, 133, 0.65);
+  will-change: transform;
+}
+
+/* --------------------------------------------------------------------------
+   2. Hero Interactive Canvas (#hero-canvas)
+   -------------------------------------------------------------------------- */
+#hero-section {
+  position: relative;
+  overflow: hidden;
+}
+
+#hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.92;
+  display: block;
+}
+
+#hero-section > *:not(#hero-canvas) {
+  position: relative;
+  z-index: 1;
+}
+
+/* --------------------------------------------------------------------------
+   3. Hero Entrance & Word Reveal Helpers
+   -------------------------------------------------------------------------- */
+.anim-word-wrap {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+}
+
+.anim-word {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+#hero-showcase-stage {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Subtle ambient float for decorative hero badges/layers */
+@keyframes origemFloatSlow {
+  0%, 100% {
+    transform: translate3d(0, 0px, 0);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes origemPulseGlow {
+  0%, 100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.06);
+  }
+}
+
+.anim-float {
+  animation: origemFloatSlow 5.5s ease-in-out infinite;
+}
+
+.anim-float-delayed {
+  animation: origemFloatSlow 6.5s ease-in-out 1.5s infinite;
+}
+
+/* --------------------------------------------------------------------------
+   4. Interactive 3D Tilt & Radial Cursor Spotlight Cards
+   Applies to .catalog-card, .feature-card, .portfolio-card, #hero-showcase-stage
+   -------------------------------------------------------------------------- */
+.catalog-card,
+.feature-card,
+.diferencial-card,
+.portfolio-card,
+.ig-card,
+.fx-tilt-card {
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+  --spotlight-opacity: 0;
+  --tilt-rx: 0deg;
+  --tilt-ry: 0deg;
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition:
+    box-shadow 0.4s var(--fx-ease-out-expo),
+    border-color 0.4s var(--fx-ease-out-expo);
+}
+
+/* Radial surface spotlight following cursor */
+.catalog-card::after,
+.feature-card::after,
+.diferencial-card::after,
+.portfolio-card::after,
+.fx-tilt-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 2;
+  opacity: var(--spotlight-opacity, 0);
+  transition: opacity 0.35s ease;
+  background: radial-gradient(
+    var(--fx-spotlight-size) circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(143, 175, 133, 0.16),
+    rgba(212, 163, 89, 0.06) 45%,
+    transparent 75%
+  );
+}
+
+.catalog-card:hover,
+.feature-card:hover,
+.diferencial-card:hover,
+.portfolio-card:hover,
+.fx-tilt-card:hover {
+  --spotlight-opacity: 1;
+}
+
+/* Subtle glowing border ring on hover */
+.fx-spotlight-border {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 3;
+  opacity: var(--spotlight-opacity, 0);
+  transition: opacity 0.35s ease;
+  background: radial-gradient(
+    260px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(143, 175, 133, 0.55),
+    rgba(212, 163, 89, 0.28) 45%,
+    transparent 75%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 1.5px;
+}
+
+/* Print Registration Crop-Mark Micro-Detail on Card Hover */
+.fx-crop-mark {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0;
+  transition:
+    opacity 0.3s var(--fx-ease-out-expo),
+    transform 0.3s var(--fx-ease-out-expo);
+}
+
+.fx-crop-mark::before,
+.fx-crop-mark::after {
+  content: "";
+  position: absolute;
+  background: var(--fx-sage);
+}
+
+.fx-crop-mark::before {
+  width: 100%;
+  height: 1.5px;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+
+.fx-crop-mark::after {
+  width: 1.5px;
+  height: 100%;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+.fx-crop-mark.tl {
+  top: 8px;
+  left: 8px;
+  transform: translate(-4px, -4px) scale(0.7);
+}
+
+.fx-crop-mark.br {
+  bottom: 8px;
+  right: 8px;
+  transform: translate(4px, 4px) scale(0.7);
+}
+
+.catalog-card:hover .fx-crop-mark,
+.feature-card:hover .fx-crop-mark,
+.portfolio-card:hover .fx-crop-mark {
+  opacity: 0.65;
+  transform: translate(0, 0) scale(1);
+}
+
+/* --------------------------------------------------------------------------
+   5. Magnetic Buttons & Shimmer Sweep (.btn-magnetic / .btn-primary)
+   -------------------------------------------------------------------------- */
+.btn-magnetic,
+.btn-primary,
+.btn-whatsapp {
+  position: relative;
+  overflow: hidden;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+}
+
+.btn-magnetic::before,
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 65%;
+  height: 100%;
+  background: linear-gradient(
+    110deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.26) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  transition: left 0.65s var(--fx-ease-out-expo);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.btn-magnetic:hover::before,
+.btn-primary:hover::before {
+  left: 145%;
+}
+
+/* --------------------------------------------------------------------------
+   6. Marquee Banner (#marquee-banner) Smooth Ticker
+   -------------------------------------------------------------------------- */
+#marquee-banner {
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
+
+#marquee-banner::before,
+#marquee-banner::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 64px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+#marquee-banner::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--marquee-edge-bg, #142418) 0%, transparent 100%);
+}
+
+#marquee-banner::after {
+  right: 0;
+  background: linear-gradient(-90deg, var(--marquee-edge-bg, #142418) 0%, transparent 100%);
+}
+
+.fx-marquee-rail {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.fx-marquee-group {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+@keyframes origemMarqueeFallback {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.fx-marquee-css-fallback {
+  animation: origemMarqueeFallback 32s linear infinite;
+}
+
+#marquee-banner:hover .fx-marquee-css-fallback {
+  animation-play-state: paused;
+}
+
+/* --------------------------------------------------------------------------
+   7. Instagram Story Highlights & Simulator Micro-Animations
+   -------------------------------------------------------------------------- */
+@keyframes origemSpinRing {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Highlight ring subtle hover animation */
+#portfolio-section [class*="highlight"]:hover svg,
+#portfolio-section [class*="highlight"]:hover img,
+#portfolio-section [class*="highlight"]:hover .highlight-ring {
+  transform: scale(1.06);
+  transition: transform 0.35s var(--fx-ease-spring);
+}
+
+/* Simulator selectable card pop */
+#simulador-section [class*="option"],
+#simulador-section [class*="card"] {
+  transition:
+    transform 0.28s var(--fx-ease-out-expo),
+    box-shadow 0.28s var(--fx-ease-out-expo),
+    border-color 0.28s ease;
+}
+
+/* Catalog Filter Transition Helpers */
+.catalog-card.fx-filtering-in {
+  animation: origemCardFilterIn 0.48s var(--fx-ease-out-expo) both;
+}
+
+@keyframes origemCardFilterIn {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   8. Floating WhatsApp Pulse & Attention FX (#floating-whatsapp)
+   -------------------------------------------------------------------------- */
+@keyframes origemWhatsappPulse {
+  0% {
+    box-shadow:
+      0 0 0 0 rgba(37, 211, 102, 0.55),
+      0 10px 25px -5px rgba(20, 36, 24, 0.35);
+  }
+  70% {
+    box-shadow:
+      0 0 0 16px rgba(37, 211, 102, 0),
+      0 14px 30px -5px rgba(20, 36, 24, 0.42);
+  }
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(37, 211, 102, 0),
+      0 10px 25px -5px rgba(20, 36, 24, 0.35);
+  }
+}
+
+#floating-whatsapp a,
+#floating-whatsapp button,
+#floating-whatsapp .whatsapp-float-btn,
+#floating-whatsapp .floating-wa-btn {
+  animation: origemWhatsappPulse 2.6s infinite cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* --------------------------------------------------------------------------
+   9. Counter Value Tabular Numerals
+   -------------------------------------------------------------------------- */
+.stat-counter {
+  font-variant-numeric: tabular-nums;
+  display: inline-block;
+}
+
+/* --------------------------------------------------------------------------
+   10. Reduced Motion Accessibility Override
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .anim-float,
+  .anim-float-delayed,
+  .fx-marquee-css-fallback {
+    animation: none !important;
+  }
+
+  .catalog-card,
+  .feature-card,
+  .diferencial-card,
+  .portfolio-card,
+  #hero-showcase-stage {
+    transform: none !important;
+  }
+}

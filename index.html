@@ -1,16 +1,423 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Luiz Eduardo - Serviços Profissionais</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Origem Personalizados RS | Gráfica Rápida, Brindes &amp; Comunicação Visual em Capão da Canoa</title>
+  <meta name="description" content="Sua ideia, nossa criação! Impressos feitos para deixar sua marca em Capão da Canoa e todo o RS. Copos térmicos gravados a laser, calendários 2027, camisetas personalizadas, papelaria corporativa, adesivos, fachadas e criação de arte exclusiva." />
+  <meta name="keywords" content="Origem Personalizados RS, gráfica Capão da Canoa, personalizados Capão da Canoa, copos térmicos personalizados, calendários 2027 personalizados, camisetas personalizadas, adesivos vinil, windbanner litoral norte RS, brindes corporativos RS, criação de arte gráfica" />
+  <meta name="author" content="Origem Personalizados RS" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#142418" />
+
+  <!-- Open Graph / Social -->
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:site_name" content="Origem Personalizados RS" />
+  <meta property="og:title" content="Origem Personalizados RS | Impressos feitos para deixar sua marca" />
+  <meta property="og:description" content="Personalizamos ideias e criamos conexões em Capão da Canoa e todo o RS. Brindes térmicos, calendários 2027, papelaria gráfica, comunicação visual e vestuário." />
+  <meta property="og:image" content="assets/logo-origem.svg" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="apple-touch-icon" href="assets/logo-origem.svg" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Stylesheets (Strict Load Order) -->
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/visuals.css" />
+  <link rel="stylesheet" href="css/sections-catalog.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+</head>
+<body>
+  <!-- Skip to content -->
+  <a href="#hero-section" class="skip-link">Pular para o conteúdo principal</a>
+
+  <!-- =====================================================================
+       STICKY GLASSMORPHIC NAVBAR (#navbar)
+       ===================================================================== -->
+  <header id="navbar" class="site-navbar">
+    <div class="container navbar-inner">
+      <a href="#hero-section" class="brand-link" aria-label="Origem Personalizados RS - Início">
+        <div id="brand-logo-nav" class="brand-logo-slot">
+          <!-- Populated/enhanced by visual-assets or fallback SVG mark -->
+          <svg class="brand-logo-fallback" viewBox="0 0 64 64" width="46" height="46" role="img" aria-label="Logo Origem Personalizados">
+            <circle cx="32" cy="32" r="30" fill="#8FAF85" stroke="#142418" stroke-width="1.5" />
+            <circle cx="32" cy="32" r="26" fill="none" stroke="#F7F9F5" stroke-width="0.9" stroke-dasharray="2 2" opacity="0.65" />
+            <text x="32" y="31" text-anchor="middle" fill="#FFFFFF" font-family="'Playfair Display', Georgia, serif" font-size="11.5" font-weight="700" letter-spacing="1.4">ORIGEM</text>
+            <text x="32" y="41" text-anchor="middle" fill="#F7F9F5" font-family="'Plus Jakarta Sans', sans-serif" font-size="4.6" font-weight="700" letter-spacing="1.5">PERSONALIZADOS</text>
+          </svg>
+        </div>
+        <div class="brand-text-group">
+          <span class="brand-title">ORIGEM</span>
+          <span class="brand-subtitle">Personalizados • RS</span>
+        </div>
+      </a>
+
+      <nav class="navbar-links" id="navbar-menu" aria-label="Navegação Principal">
+        <a href="#hero-section" class="nav-link active">Início</a>
+        <a href="#diferenciais-section" class="nav-link">Diferenciais</a>
+        <a href="#catalogo-section" class="nav-link">Catálogo</a>
+        <a href="#simulador-section" class="nav-link nav-link-highlight">
+          <span class="nav-dot"></span>Simulador
+        </a>
+        <a href="#portfolio-section" class="nav-link">Portfólio</a>
+        <a href="#como-funciona-section" class="nav-link">Como Funciona</a>
+      </nav>
+
+      <div class="navbar-actions">
+        <a
+          href="https://www.instagram.com/origempersonalizadosrs/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="nav-social-btn"
+          aria-label="Instagram @origempersonalizadosrs"
+          title="Siga @origempersonalizadosrs no Instagram"
+        >
+          <i data-lucide="instagram"></i>
+          <span class="nav-social-handle">@origempersonalizadosrs</span>
+        </a>
+
+        <a
+          href="https://wa.me/5551980577025?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20Origem%20Personalizados%20RS%20e%20gostaria%20de%20fazer%20um%20or%C3%A7amento."
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-primary btn-magnetic navbar-cta"
+        >
+          <i data-lucide="message-circle"></i>
+          <span>Orçamento no WhatsApp</span>
+        </a>
+
+        <button
+          type="button"
+          id="mobile-menu-toggle"
+          class="mobile-menu-btn"
+          aria-label="Abrir menu de navegação"
+          aria-expanded="false"
+          aria-controls="navbar-menu"
+        >
+          <i data-lucide="menu" class="icon-menu"></i>
+          <i data-lucide="x" class="icon-close"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- =====================================================================
+         HERO SECTION (#hero-section)
+         ===================================================================== -->
+    <section id="hero-section" class="hero-section">
+      <canvas id="hero-canvas" aria-hidden="true"></canvas>
+
+      <div class="hero-ambient-glow hero-glow-sage" aria-hidden="true"></div>
+      <div class="hero-ambient-glow hero-glow-amber" aria-hidden="true"></div>
+
+      <div class="container hero-grid">
+        <!-- Left Column: Copy, CTAs & Trust Metrics -->
+        <div class="hero-content">
+          <div class="hero-badge">
+            <span class="hero-badge-pulse"></span>
+            <i data-lucide="map-pin" class="badge-icon"></i>
+            <span>Capão da Canoa • RS | Gráfica Rápida &amp; Personalizados</span>
+          </div>
+
+          <h1 class="hero-headline">
+            Sua ideia, nossa criação.
+            <em class="hero-headline-serif">Impressos feitos para deixar sua marca.</em>
+          </h1>
+
+          <p class="hero-subheadline">
+            Personalizamos ideias e criamos conexões! Do presente único ao lote corporativo:
+            <strong>copos térmicos gravados a laser, calendários 2027, uniformes, papelaria gráfica, adesivos e fachadas</strong>
+            com criação de arte exclusiva e acabamento impecável para empresas, eventos e famílias.
+          </p>
+
+          <div class="hero-cta-group">
+            <a
+              href="#simulador-section"
+              class="btn btn-primary btn-lg btn-magnetic"
+            >
+              <i data-lucide="sparkles"></i>
+              <span>Simular Meu Pedido em 30s</span>
+            </a>
+
+            <a
+              href="https://wa.me/message/L34PQGHRXEMLM1"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-outline-light btn-lg"
+            >
+              <i data-lucide="message-circle"></i>
+              <span>Chamar no WhatsApp</span>
+            </a>
+          </div>
+
+          <div class="hero-quick-tags" aria-label="Categorias principais">
+            <a href="#catalogo-section" class="quick-tag"><i data-lucide="check-circle-2"></i> Criamos sua arte do zero</a>
+            <a href="#catalogo-section" class="quick-tag"><i data-lucide="check-circle-2"></i> Pequenas ou grandes quantidades</a>
+            <a href="#catalogo-section" class="quick-tag"><i data-lucide="check-circle-2"></i> Entrega rápida no Litoral Norte e RS</a>
+          </div>
+
+          <!-- Trust Metrics Bar (4 stats with .stat-counter and data-target) -->
+          <div class="hero-metrics-bar" role="region" aria-label="Números da Origem Personalizados RS">
+            <div class="metric-item">
+              <div class="metric-value-wrap">
+                <span class="metric-prefix">+</span>
+                <span class="stat-counter" data-target="1500" data-suffix="">1500</span>
+              </div>
+              <span class="metric-label">Projetos &amp; Personalizados Entregues</span>
+            </div>
+
+            <div class="metric-divider" aria-hidden="true"></div>
+
+            <div class="metric-item">
+              <div class="metric-value-wrap">
+                <span class="stat-counter" data-target="100" data-suffix="">100</span>
+                <span class="metric-suffix">%</span>
+              </div>
+              <span class="metric-label">Criação de Arte Personalizada</span>
+            </div>
+
+            <div class="metric-divider" aria-hidden="true"></div>
+
+            <div class="metric-item">
+              <div class="metric-value-wrap">
+                <span class="metric-prefix">+</span>
+                <span class="stat-counter" data-target="40" data-suffix="">40</span>
+              </div>
+              <span class="metric-label">Opções de Produtos &amp; Impressos</span>
+            </div>
+
+            <div class="metric-divider" aria-hidden="true"></div>
+
+            <div class="metric-item">
+              <div class="metric-value-wrap">
+                <span class="stat-counter" data-target="5" data-suffix="">5</span>
+                <span class="metric-suffix">.0 ★</span>
+              </div>
+              <span class="metric-label">Atendimento Ágil no WhatsApp</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Interactive 3D/SVG Product Showcase Stage -->
+        <div class="hero-stage-wrapper">
+          <div id="hero-showcase-stage" class="hero-showcase-stage" aria-label="Vitrine interativa de produtos personalizados">
+            <!-- Mounted dynamically by visual-assets (js/product-visuals.js) -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         INFINITE SCROLLING MARQUEE BANNER (#marquee-banner)
+         ===================================================================== -->
+    <div id="marquee-banner" class="marquee-banner" aria-label="Produtos em destaque">
+      <div class="marquee-track">
+        <div class="marquee-content">
+          <span class="marquee-item"><i data-lucide="cup-soda"></i> Copos Térmicos</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item"><i data-lucide="calendar-days"></i> Calendários 2027</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item"><i data-lucide="shirt"></i> Camisetas Personalizadas</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item"><i data-lucide="sticker"></i> Adesivos &amp; Rótulos</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item"><i data-lucide="credit-card"></i> Cartões de Visita</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item"><i data-lucide="flag"></i> WindBanners &amp; Fachadas</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item"><i data-lucide="layers"></i> Tapetes Capachos</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item"><i data-lucide="frame"></i> Quadros Decorativos</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item"><i data-lucide="gift"></i> Brindes Corporativos</span>
+          <span class="marquee-sep">•</span>
+        </div>
+        <div class="marquee-content" aria-hidden="true">
+          <span class="marquee-item"><i data-lucide="cup-soda"></i> Copos Térmicos</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item"><i data-lucide="calendar-days"></i> Calendários 2027</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item"><i data-lucide="shirt"></i> Camisetas Personalizadas</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item"><i data-lucide="sticker"></i> Adesivos &amp; Rótulos</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item"><i data-lucide="credit-card"></i> Cartões de Visita</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item"><i data-lucide="flag"></i> WindBanners &amp; Fachadas</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item"><i data-lucide="layers"></i> Tapetes Capachos</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item"><i data-lucide="frame"></i> Quadros Decorativos</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item"><i data-lucide="gift"></i> Brindes Corporativos</span>
+          <span class="marquee-sep">•</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         DIFERENCIAIS SECTION (#diferenciais-section)
+         ===================================================================== -->
+    <section id="diferenciais-section" class="diferenciais-section section-padding">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">
+            <i data-lucide="award"></i>
+            Por que escolher a Origem Personalizados RS?
+          </span>
+          <h2 class="section-title">
+            Cuidado artesanal aliado à <span class="text-serif-accent">tecnologia de impressão</span>
+          </h2>
+          <p class="section-description">
+            Sabemos que cada brinde, uniforme ou cartão carrega o nome do seu negócio ou a emoção de um momento especial. Por isso, descomplicamos todo o processo para você.
+          </p>
+        </div>
+
+        <div class="diferenciais-grid">
+          <!-- Card 1 -->
+          <article class="feature-card">
+            <div class="feature-card-top">
+              <div class="feature-icon-box">
+                <i data-lucide="palette"></i>
+              </div>
+              <span class="feature-number">01</span>
+            </div>
+            <h3 class="feature-title">Criação de Arte Exclusiva</h3>
+            <p class="feature-text">
+              Não tem logotipo ou arquivo pronto? Fique tranquilo! Nossa equipe desenvolve o layout do zero, envia a prévia digital e ajusta até ficar exatamente como você imaginou.
+            </p>
+            <div class="feature-tag-row">
+              <span class="feature-pill">Aprovação Digital Prévia</span>
+              <span class="feature-pill">Design Incluso</span>
+            </div>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="feature-card">
+            <div class="feature-card-top">
+              <div class="feature-icon-box feature-icon-amber">
+                <i data-lucide="gem"></i>
+              </div>
+              <span class="feature-number">02</span>
+            </div>
+            <h3 class="feature-title">Acabamento Premium &amp; Durabilidade</h3>
+            <p class="feature-text">
+              Gravação a laser permanente em inox, impressão digital de alta definição, vinil resistente ao sol e chuva do litoral e tecidos selecionados que valorizam sua marca.
+            </p>
+            <div class="feature-tag-row">
+              <span class="feature-pill">Gravação a Laser</span>
+              <span class="feature-pill">Alta Definição</span>
+            </div>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="feature-card">
+            <div class="feature-card-top">
+              <div class="feature-icon-box">
+                <i data-lucide="package-check"></i>
+              </div>
+              <span class="feature-number">03</span>
+            </div>
+            <h3 class="feature-title">Do Presente Único ao Lote Corporativo</h3>
+            <p class="feature-text">
+              Atendemos desde quem quer presentear uma pessoa querida com uma caneca ou camiseta exclusiva até empresas, CTGs e eventos que precisam de centenas de kits.
+            </p>
+            <div class="feature-tag-row">
+              <span class="feature-pill">Varejo &amp; Atacado</span>
+              <span class="feature-pill">Kits Corporativos</span>
+            </div>
+          </article>
+
+          <!-- Card 4 -->
+          <article class="feature-card">
+            <div class="feature-card-top">
+              <div class="feature-icon-box feature-icon-amber">
+                <i data-lucide="zap"></i>
+              </div>
+              <span class="feature-number">04</span>
+            </div>
+            <h3 class="feature-title">Atendimento Direto e Ágil em Capão da Canoa</h3>
+            <p class="feature-text">
+              Sem robôs complicados ou demora! Você conversa direto com nossa equipe pelo WhatsApp, tira dúvidas na hora e recebe com rapidez em Capão da Canoa, Litoral Norte e todo o RS.
+            </p>
+            <div class="feature-tag-row">
+              <span class="feature-pill">Capão da Canoa • RS</span>
+              <span class="feature-pill">Orçamento Rápido</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         DYNAMIC SECTIONS POPULATED BY sections-catalog (js/sections-catalog.js)
+         ===================================================================== -->
+    <section id="catalogo-section" class="catalogo-section"></section>
+    <section id="simulador-section" class="simulador-section"></section>
+    <section id="portfolio-section" class="portfolio-section"></section>
+    <section id="como-funciona-section" class="como-funciona-section"></section>
+    <section id="cta-final-section" class="cta-final-section"></section>
+  </main>
+
+  <!-- =====================================================================
+       FOOTER SECTION (#footer-section - populated by sections-catalog)
+       ===================================================================== -->
+  <footer id="footer-section" class="footer-section"></footer>
+
+  <!-- =====================================================================
+       FLOATING WHATSAPP WIDGET (#floating-whatsapp)
+       ===================================================================== -->
+  <div id="floating-whatsapp" class="floating-whatsapp" role="complementary" aria-label="Atendimento rápido via WhatsApp">
+    <div class="wa-tooltip" id="wa-tooltip">
+      <button type="button" class="wa-tooltip-close" id="wa-tooltip-close" aria-label="Fechar aviso do WhatsApp">&times;</button>
+      <div class="wa-tooltip-header">
+        <span class="wa-online-dot"></span>
+        <strong>Origem Personalizados RS</strong>
+      </div>
+      <p class="wa-tooltip-text">Olá! Quer orçar copos térmicos, calendários 2027, camisetas ou impressos? Chame agora!</p>
+      <a
+        href="https://wa.me/5551980577025?text=Ol%C3%A1%20Origem%20Personalizados%21%20Vim%20pelo%20site%20e%20quero%20fazer%20um%20or%C3%A7amento."
+        target="_blank"
+        rel="noopener noreferrer"
+        class="wa-tooltip-cta"
+      >
+        Iniciar conversa &rarr;
+      </a>
+    </div>
+
+    <a
+      href="https://wa.me/5551980577025?text=Ol%C3%A1%20Origem%20Personalizados%21%20Vim%20pelo%20site%20e%20gostaria%20de%20um%20or%C3%A7amento."
+      target="_blank"
+      rel="noopener noreferrer"
+      class="wa-float-btn"
+      aria-label="Conversar no WhatsApp (51) 98057-7025"
+    >
+      <span class="wa-pulse-ring" aria-hidden="true"></span>
+      <span class="wa-unread-badge">1</span>
+      <svg class="wa-svg-icon" viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-hidden="true">
+        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.126.556 4.124 1.533 5.859l-1.533 5.601 5.736-1.504c1.693.922 3.631 1.448 5.694 1.448 6.627 0 12-5.373 12-12s-5.373-12-11.43-11.404z"/>
+      </svg>
+    </a>
+  </div>
+
+  <!-- =====================================================================
+       CDN LIBRARIES & APPLICATION SCRIPTS (Strict Load Order)
+       ===================================================================== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script src="js/product-visuals.js"></script>
+  <script src="js/sections-catalog.js"></script>
+  <script src="js/animations.js"></script>
+  <script src="js/main.js"></script>
+</body>
 </html>

@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Origem Personalizados RS">
+  <defs>
+    <linearGradient id="origemSageGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9DBE93" />
+      <stop offset="55%" stop-color="#8FAF85" />
+      <stop offset="100%" stop-color="#789A6E" />
+    </linearGradient>
+    <radialGradient id="origemHighlight" cx="30%" cy="25%" r="70%">
+      <stop offset="0%" stop-color="#B5D1AC" stop-opacity="0.45" />
+      <stop offset="100%" stop-color="#8FAF85" stop-opacity="0" />
+    </radialGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#142418" flood-opacity="0.18" />
+    </filter>
+  </defs>
+
+  <!-- Main Circular Sage Badge -->
+  <circle cx="100" cy="100" r="96" fill="url(#origemSageGrad)" />
+  <circle cx="100" cy="100" r="96" fill="url(#origemHighlight)" />
+
+  <!-- Subtle Inner Framing Ring -->
+  <circle cx="100" cy="100" r="88" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-opacity="0.35" />
+  <circle cx="100" cy="100" r="83" fill="none" stroke="#FFFFFF" stroke-width="0.6" stroke-opacity="0.2" stroke-dasharray="3 3" />
+
+  <!-- Subtle Top Minimal Botanical / Print Mark Accent -->
+  <g stroke="#FFFFFF" stroke-opacity="0.65" stroke-width="1.2" fill="none" transform="translate(100, 52)">
+    <line x1="-26" y1="0" x2="-8" y2="0" />
+    <circle cx="0" cy="0" r="2.2" fill="#FFFFFF" stroke="none" />
+    <line x1="8" y1="0" x2="26" y2="0" />
+  </g>
+
+  <!-- ORIGEM - Elegant Uppercase Serif -->
+  <text x="100" y="106"
+        text-anchor="middle"
+        fill="#FFFFFF"
+        font-family="'Playfair Display', 'Georgia', 'Times New Roman', serif"
+        font-size="33"
+        font-weight="600"
+        letter-spacing="4.5"
+        filter="url(#softShadow)">ORIGEM</text>
+
+  <!-- Delicate Divider Line -->
+  <line x1="46" y1="119" x2="154" y2="119" stroke="#FFFFFF" stroke-width="1" stroke-opacity="0.45" />
+
+  <!-- PERSONALIZADOS - Clean Uppercase Sans-Serif with Wide Tracking -->
+  <text x="101.5" y="135"
+        text-anchor="middle"
+        fill="#FFFFFF"
+        font-family="'Plus Jakarta Sans', 'Montserrat', 'Helvetica Neue', Arial, sans-serif"
+        font-size="10.2"
+        font-weight="600"
+        letter-spacing="3.4"
+        opacity="0.96">PERSONALIZADOS</text>
+
+  <!-- Bottom Subtle Regional Dot Accent -->
+  <text x="100" y="156"
+        text-anchor="middle"
+        fill="#F7F9F5"
+        font-family="'Plus Jakarta Sans', Arial, sans-serif"
+        font-size="7.5"
+        font-weight="500"
+        letter-spacing="2.2"
+        opacity="0.75">CAPÃO DA CANOA • RS</text>
+</svg>
